@@ -13,16 +13,12 @@
  */
 
 var async = require('async')
-
 var _ = require('lodash')
-
 var moment = require('moment-timezone')
-
 var winston = require('winston')
-
 var permissions = require('../../../permissions')
-
 var emitter = require('../../../emitter')
+var sanitizeHtml = require('sanitize-html')
 
 var apiTickets = {}
 
@@ -158,16 +154,23 @@ apiTickets.get = function (req, res) {
 
   var ticketModel = require('../../../models/ticket')
   var groupModel = require('../../../models/group')
+  var departmentModel = require('../../../models/department')
 
   async.waterfall(
     [
       function (callback) {
-        groupModel.getAllGroupsOfUserNoPopulate(user._id, function (err, grps) {
-          callback(err, grps)
-        })
+        if (user.role.isAdmin || user.role.isAgent) {
+          departmentModel.getDepartmentGroupsOfUser(user._id, function (err, groups) {
+            callback(err, groups)
+          })
+        } else {
+          groupModel.getAllGroupsOfUserNoPopulate(user._id, function (err, grps) {
+            callback(err, grps)
+          })
+        }
       },
       function (grps, callback) {
-        if (permissions.canThis(user.role, 'ticket:public')) {
+        if (permissions.canThis(user.role, 'tickets:public')) {
           groupModel.getAllPublicGroups(function (err, publicGroups) {
             if (err) return callback(err)
 
@@ -181,11 +184,38 @@ apiTickets.get = function (req, res) {
       },
       function (grps, callback) {
         ticketModel.getTicketsWithObject(grps, object, function (err, results) {
-          if (!permissions.canThis(user.role, 'notes:view')) {
+          if (!permissions.canThis(user.role, 'comments:view')) {
+            _.each(results, function (ticket) {
+              ticket.comments = []
+            })
+          }
+
+          if (!permissions.canThis(user.role, 'tickets:notes')) {
             _.each(results, function (ticket) {
               ticket.notes = []
             })
           }
+
+          // sanitize
+          _.each(results, function (ticket) {
+            ticket.subscribers = _.map(ticket.subscribers, function (s) {
+              return s._id
+            })
+
+            ticket.history = _.map(ticket.history, function (h) {
+              var obj = {
+                date: h.date,
+                _id: h._id,
+                action: h.action,
+                description: h.description,
+                owner: _.clone(h.owner)
+              }
+              obj.owner.role = h.owner.role._id
+              return obj
+            })
+
+            ticket.owner.role = ticket.owner.role._id
+          })
 
           return callback(err, results)
         })
@@ -197,6 +227,68 @@ apiTickets.get = function (req, res) {
       return res.json(results)
     }
   )
+}
+
+apiTickets.getByGroup = function (req, res) {
+  var groupId = req.params.id
+  if (!groupId) return res.status(400).json({ success: false, error: 'Invalid Group Id' })
+
+  var limit = req.query.limit ? Number(req.query.limit) : 50
+  var page = req.query.page ? Number(req.query.page) : 0
+
+  var obj = {
+    limit: limit,
+    page: page
+  }
+
+  var ticketSchema = require('../../../models/ticket')
+  ticketSchema.getTicketsWithObject([groupId], obj, function (err, tickets) {
+    if (err) return res.status(500).json({ success: false, error: err.message })
+
+    return res.json({ success: true, tickets: tickets, count: tickets.length })
+  })
+}
+
+apiTickets.getCountByGroup = function (req, res) {
+  var groupId = req.params.id
+  if (!groupId) return res.status(400).json({ success: false, error: 'Invalid Group Id' })
+  if (_.isUndefined(req.query.type) || _.isUndefined(req.query.value))
+    return res.status(400).json({ success: false, error: 'Invalid QueryString' })
+
+  var type = req.query.type
+  var value = req.query.value
+  // var limit = req.query.limit ? Number(req.query.limit) : -1
+  // var page = req.query.page ? Number(req.query.page) : 0
+
+  var ticketSchema = require('../../../models/ticket')
+
+  var obj = {
+    // limit: limit,
+    // page: page
+  }
+
+  switch (type.toLowerCase()) {
+    case 'status':
+      obj.status = [Number(value)]
+      ticketSchema.getCountWithObject([groupId], obj, function (err, count) {
+        if (err) return res.status(500).json({ success: false, error: err.message })
+
+        return res.json({ success: true, count: count })
+      })
+      break
+    case 'tickettype':
+      obj.filter = {
+        types: [value]
+      }
+      ticketSchema.getCountWithObject([groupId], obj, function (err, count) {
+        if (err) return res.status(500).json({ success: false, error: err.message })
+
+        return res.json({ success: true, count: count })
+      })
+      break
+    default:
+      return res.status(400).json({ success: false, error: 'Unsupported type query' })
+  }
 }
 
 /**
@@ -225,16 +317,19 @@ apiTickets.search = function (req, res) {
 
   var ticketModel = require('../../../models/ticket')
   var groupModel = require('../../../models/group')
+  var departmentModel = require('../../../models/department')
 
   async.waterfall(
     [
       function (callback) {
-        groupModel.getAllGroupsOfUserNoPopulate(req.user._id, function (err, grps) {
-          callback(err, grps)
-        })
+        if (req.user.role.isAdmin || req.user.role.isAgent) {
+          return departmentModel.getDepartmentGroupsOfUser(req.user._id, callback)
+        } else {
+          return groupModel.getAllGroupsOfUserNoPopulate(req.user._id, callback)
+        }
       },
       function (grps, callback) {
-        if (permissions.canThis(req.user.role, 'ticket:public')) {
+        if (permissions.canThis(req.user.role, 'tickets:public')) {
           groupModel.getAllPublicGroups(function (err, publicGroups) {
             if (err) return callback(err)
 
@@ -248,7 +343,7 @@ apiTickets.search = function (req, res) {
       },
       function (grps, callback) {
         ticketModel.getTicketsWithSearchString(grps, searchString, function (err, results) {
-          if (!permissions.canThis(req.user.role.role, 'notes:view')) {
+          if (!permissions.canThis(req.user.role.role, 'tickets:notes')) {
             _.each(results, function (ticket) {
               ticket.notes = []
             })
@@ -265,6 +360,7 @@ apiTickets.search = function (req, res) {
         success: true,
         error: null,
         count: _.size(results),
+        totalCount: _.size(results),
         tickets: _.sortBy(results, 'uid').reverse()
       })
     }
@@ -286,7 +382,8 @@ apiTickets.search = function (req, res) {
  *      "owner": {OwnerId},
  *      "group": {GroupId},
  *      "type": {TypeId},
- *      "prioirty": 0-3
+ *      "prioirty": {PriorityId},
+ *      "tags": [{tagId}]
  * }
  *
  * @apiExample Example usage:
@@ -313,7 +410,8 @@ apiTickets.create = function (req, res) {
   response.success = true
 
   var postData = req.body
-  if (!_.isObject(postData)) return res.status(400).json({ success: false, error: 'Invalid Post Data' })
+  if (!_.isObject(postData) || !postData.subject || !postData.issue)
+    return res.status(400).json({ success: false, error: 'Invalid Post Data' })
 
   var socketId = _.isUndefined(postData.socketId) ? '' : postData.socketId
 
@@ -337,9 +435,12 @@ apiTickets.create = function (req, res) {
     ticket.owner = req.user._id
   }
 
+  ticket.subject = sanitizeHtml(ticket.subject).trim()
+
   var marked = require('marked')
   var tIssue = ticket.issue
   tIssue = tIssue.replace(/(\r\n|\n\r|\r|\n)/g, '<br>')
+  tIssue = sanitizeHtml(tIssue).trim()
   ticket.issue = marked(tIssue)
   ticket.history = [HistoryItem]
   ticket.subscribers = [req.user._id]
@@ -352,14 +453,23 @@ apiTickets.create = function (req, res) {
       return res.status(400).json(response)
     }
 
-    emitter.emit('ticket:created', {
-      hostname: req.headers.host,
-      socketId: socketId,
-      ticket: t
-    })
+    t.populate('group owner priority', function (err, tt) {
+      if (err) {
+        response.success = false
+        response.error = err
+        winston.debug(response)
+        return res.status(400).json(response)
+      }
 
-    response.ticket = t
-    res.json(response)
+      emitter.emit('ticket:created', {
+        hostname: req.headers.host,
+        socketId: socketId,
+        ticket: tt
+      })
+
+      response.ticket = tt
+      res.json(response)
+    })
   })
 }
 
@@ -409,6 +519,18 @@ apiTickets.createPublicTicket = function (req, res) {
   async.waterfall(
     [
       function (next) {
+        var settingSchmea = require('../../../models/setting')
+        settingSchmea.getSetting('role:user:default', function (err, roleDefault) {
+          if (err) return next(err)
+          if (!roleDefault) {
+            winston.error('No Default User Role Set. (Settings > Permissions > Default User Role)')
+            return next('No Default Role Set')
+          }
+
+          return next(null, roleDefault)
+        })
+      },
+      function (roleDefault, next) {
         var UserSchema = require('../../../models/user')
         plainTextPass = chance.string({
           length: 6,
@@ -420,7 +542,8 @@ apiTickets.createPublicTicket = function (req, res) {
           password: plainTextPass,
           fullname: postData.user.fullname,
           email: postData.user.email,
-          role: 'user'
+          accessToken: chance.hash(),
+          role: roleDefault.value
         })
 
         user.save(function (err, savedUser) {
@@ -477,8 +600,8 @@ apiTickets.createPublicTicket = function (req, res) {
             group: group._id,
             type: ticketType._id,
             priority: _.first(ticketType.priorities)._id, // TODO: change when priority order is complete!
-            subject: postData.ticket.subject,
-            issue: postData.ticket.issue,
+            subject: sanitizeHtml(postData.ticket.subject).trim(),
+            issue: sanitizeHtml(postData.ticket.issue).trim(),
             history: [HistoryItem],
             subscribers: [savedUser._id]
           })
@@ -486,6 +609,7 @@ apiTickets.createPublicTicket = function (req, res) {
           var marked = require('marked')
           var tIssue = ticket.issue
           tIssue = tIssue.replace(/(\r\n|\n\r|\r|\n)/g, '<br>')
+          tIssue = sanitizeHtml(tIssue).trim()
           ticket.issue = marked(tIssue)
 
           ticket.save(function (err, t) {
@@ -553,7 +677,7 @@ apiTickets.single = function (req, res) {
     }
 
     ticket = _.clone(ticket._doc)
-    if (!permissions.canThis(req.user.role, 'notes:view')) {
+    if (!permissions.canThis(req.user.role, 'tickets:notes')) {
       delete ticket.notes
     }
 
@@ -590,7 +714,7 @@ apiTickets.update = function (req, res) {
   var user = req.user
   if (!_.isUndefined(user) && !_.isNull(user)) {
     var permissions = require('../../../permissions')
-    if (!permissions.canThis(user.role, 'ticket:update')) {
+    if (!permissions.canThis(user.role, 'tickets:update')) {
       return res.status(401).json({ success: false, error: 'Invalid Permissions' })
     }
     var oId = req.params.id
@@ -599,6 +723,7 @@ apiTickets.update = function (req, res) {
     var ticketModel = require('../../../models/ticket')
     ticketModel.getTicketById(oId, function (err, ticket) {
       if (err) return res.status(400).json({ success: false, error: err.message })
+      if (!ticket) return res.status(400).json({ success: false, error: 'Unable to locate ticket. Aborting...' })
       async.parallel(
         [
           function (cb) {
@@ -610,14 +735,14 @@ apiTickets.update = function (req, res) {
           },
           function (cb) {
             if (!_.isUndefined(reqTicket.subject)) {
-              ticket.subject = reqTicket.subject
+              ticket.subject = sanitizeHtml(reqTicket.subject).trim()
             }
 
             return cb()
           },
           function (cb) {
             if (!_.isUndefined(reqTicket.group)) {
-              ticket.group = reqTicket.group._id
+              ticket.group = reqTicket.group._id || reqTicket.group
 
               ticket.populate('group', function () {
                 return cb()
@@ -642,7 +767,7 @@ apiTickets.update = function (req, res) {
           },
           function (cb) {
             if (!_.isUndefined(reqTicket.issue) && !_.isNull(reqTicket.issue)) {
-              ticket.issue = reqTicket.issue
+              ticket.issue = sanitizeHtml(reqTicket.issue).trim()
             }
 
             return cb()
@@ -674,11 +799,9 @@ apiTickets.update = function (req, res) {
               return res.status(400).json({ success: false, error: err.message })
             }
 
-            if (!permissions.canThis(user.role, 'notes:view')) {
+            if (!permissions.canThis(user.role, 'tickets:notes')) {
               t.notes = []
             }
-
-            emitter.emit('ticket:updated', t)
 
             return res.json({
               success: true,
@@ -766,7 +889,7 @@ apiTickets.delete = function (req, res) {
 apiTickets.postComment = function (req, res) {
   var commentJson = req.body
   var comment = commentJson.comment
-  var owner = commentJson.ownerId
+  var owner = commentJson.ownerId || req.user._id
   var ticketId = commentJson._id
 
   if (_.isUndefined(ticketId)) return res.status(400).json({ success: false, error: 'Invalid Post Data' })
@@ -780,6 +903,8 @@ apiTickets.postComment = function (req, res) {
     marked.setOptions({
       breaks: true
     })
+
+    comment = sanitizeHtml(comment).trim()
 
     var Comment = {
       owner: owner,
@@ -799,17 +924,13 @@ apiTickets.postComment = function (req, res) {
     t.save(function (err, tt) {
       if (err) return res.status(400).json({ success: false, error: err.message })
 
-      if (!permissions.canThis(req.user.role, 'notes:view')) {
+      if (!permissions.canThis(req.user.role, 'tickets:notes')) {
         tt.notes = []
       }
 
-      ticketModel.populate(tt, 'subscribers comments.owner', function (err) {
-        if (err) return res.json({ success: true, error: null, ticket: tt })
+      emitter.emit('ticket:comment:added', tt, Comment, req.headers.host)
 
-        emitter.emit('ticket:comment:added', tt, Comment, req.headers.host)
-
-        return res.json({ success: true, error: null, ticket: tt })
-      })
+      return res.json({ success: true, error: null, ticket: tt })
     })
   })
 }
@@ -858,7 +979,7 @@ apiTickets.postInternalNote = function (req, res) {
     var marked = require('marked')
     // var note = payload.note.replace(/(\r\n|\n\r|\r|\n)/g, "<br>");
     var Note = {
-      owner: payload.owner,
+      owner: payload.owner || req.user._id,
       date: new Date(),
       note: marked(payload.note)
     }
@@ -868,14 +989,14 @@ apiTickets.postInternalNote = function (req, res) {
     var HistoryItem = {
       action: 'ticket:note:added',
       description: 'Internal note was added',
-      owner: payload.owner
+      owner: payload.owner || req.user._id
     }
     ticket.history.push(HistoryItem)
 
     ticket.save(function (err, savedTicket) {
       if (err) return res.status(400).json({ success: false, error: err.message })
 
-      ticketModel.populate(savedTicket, 'subscribers notes.owner', function (err) {
+      ticketModel.populate(savedTicket, 'subscribers notes.owner history.owner', function (err, savedTicket) {
         if (err) return res.json({ success: true, ticket: savedTicket })
 
         emitter.emit('ticket:note:added', savedTicket, Note)
@@ -941,9 +1062,7 @@ apiTickets.getType = function (req, res) {
  */
 apiTickets.createType = function (req, res) {
   var typeName = req.body.name
-
   var ticketTypeSchema = require('../../../models/tickettype')
-
   var ticketPrioritiesSchema = require('../../../models/ticketpriority')
 
   if (_.isUndefined(typeName) || typeName.length < 3)
@@ -1080,7 +1199,6 @@ apiTickets.typeRemovePriority = function (req, res) {
  */
 apiTickets.deleteType = function (req, res) {
   var newTypeId = req.body.newTypeId
-
   var delTypeId = req.params.id
 
   if (_.isUndefined(newTypeId) || _.isUndefined(delTypeId)) {
@@ -1088,9 +1206,7 @@ apiTickets.deleteType = function (req, res) {
   }
 
   var ticketTypeSchema = require('../../../models/tickettype')
-
   var ticketSchema = require('../../../models/ticket')
-
   var settingsSchema = require('../../../models/setting')
 
   async.waterfall(
@@ -1331,7 +1447,7 @@ function parseTicketStats (role, tickets, callback) {
   if (_.isEmpty(tickets)) return callback({ tickets: tickets, tags: {} })
   var t = []
   var tags = {}
-  if (!permissions.canThis(role, 'notes:view')) {
+  if (!permissions.canThis(role, 'tickets:notes')) {
     _.each(tickets, function (ticket) {
       ticket.notes = []
     })
@@ -1403,7 +1519,8 @@ apiTickets.getTicketStatsForGroup = function (req, res) {
   async.waterfall(
     [
       function (callback) {
-        ticketModel.getTickets([groupId], function (err, tickets) {
+        var obj = { limit: 10000, page: 0 }
+        ticketModel.getTicketsWithObject([groupId], obj, function (err, tickets) {
           if (err) return callback(err)
           parseTicketStats(req.user.role, tickets, function (data) {
             tags = data.tags
@@ -1701,12 +1818,12 @@ apiTickets.subscribe = function (req, res) {
         }
       ],
       function () {
-        ticket.save(function (err) {
+        ticket.save(function (err, ticket) {
           if (err) return res.status(400).json({ error: err })
 
-          emitter.emit('ticket:subscribers:update')
+          emitter.emit('ticket:subscriber:update', ticket)
 
-          res.json({ success: true })
+          res.json({ success: true, ticket: ticket })
         })
       }
     )
@@ -1768,20 +1885,58 @@ apiTickets.getOverdue = function (req, res) {
     }
 
     var ticketSchema = require('../../../models/ticket')
+    var departmentSchema = require('../../../models/department')
     var groupSchema = require('../../../models/group')
-    groupSchema.getAllGroupsOfUser(req.user._id, function (err, grps) {
-      if (err) return res.status(400).json({ success: false, error: err.message })
-      grps = grps.map(function (g) {
-        return g._id.toString()
-      })
-      ticketSchema.getOverdue(grps, function (err, objs) {
+
+    async.waterfall(
+      [
+        function (next) {
+          if (!req.user.role.isAdmin && !req.user.role.isAgent) {
+            return groupSchema.getAllGroupsOfUserNoPopulate(req.user._id, next)
+          } else {
+            return departmentSchema.getDepartmentGroupsOfUser(req.user._id, next)
+          }
+        },
+        function (groups, next) {
+          var groupIds = groups.map(function (g) {
+            return g._id
+          })
+
+          ticketSchema.getOverdue(groupIds, function (err, tickets) {
+            if (err) return next(err)
+
+            var sorted = _.sortBy(tickets, 'uid').reverse()
+
+            return next(null, sorted)
+          })
+        }
+      ],
+      function (err, overdueTickets) {
         if (err) return res.status(400).json({ success: false, error: err.message })
 
-        var sorted = _.sortBy(objs, 'uid').reverse()
+        return res.json({ success: true, tickets: overdueTickets })
+      }
+    )
+  })
+}
 
-        return res.json({ success: true, tickets: sorted })
-      })
-    })
+apiTickets.getDeletedTickets = function (req, res) {
+  var ticketSchema = require('../../../models/ticket')
+  ticketSchema.getDeleted(function (err, tickets) {
+    if (err) return res.status(500).json({ success: false, error: err })
+
+    return res.json({ success: true, count: tickets.length, deletedTickets: tickets })
+  })
+}
+
+apiTickets.restoreDeleted = function (req, res) {
+  var postData = req.body
+  if (!postData || !postData._id) return res.status(400).json({ success: false, error: 'Invalid Post Data' })
+  var ticketSchema = require('../../../models/ticket')
+  ticketSchema.restoreDeleted(postData._id, function (err) {
+    if (err) return res.status(500).json({ success: false, error: err })
+
+    return res.json({ success: true })
   })
 }
 

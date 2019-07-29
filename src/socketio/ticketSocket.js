@@ -15,11 +15,13 @@ var _ = require('lodash')
 var async = require('async')
 var winston = require('winston')
 var marked = require('marked')
+var sanitizeHtml = require('sanitize-html')
 var utils = require('../helpers/utils')
 var emitter = require('../emitter')
 var ticketSchema = require('../models/ticket')
 var prioritySchema = require('../models/ticketpriority')
 var userSchema = require('../models/user')
+var roleSchema = require('../models/role')
 var permissions = require('../permissions')
 
 var events = {}
@@ -34,6 +36,7 @@ function register (socket) {
   events.onSetTicketType(socket)
   events.onSetTicketPriority(socket)
   events.onSetTicketGroup(socket)
+  events.onSetTicketDueDate(socket)
   events.onSetTicketIssue(socket)
   events.onSetCommentText(socket)
   events.onRemoveComment(socket)
@@ -63,12 +66,13 @@ events.onUpdateTicketStatus = function (socket) {
       ticket.setStatus(ownerId, status, function (err, t) {
         if (err) return true
 
-        t.save(function (err) {
+        t.save(function (err, t) {
           if (err) return true
 
-          emitter.emit('ticket:updated', ticketId)
+          // emitter.emit('ticket:updated', t)
           utils.sendToAllConnectedClients(io, 'updateTicketStatus', {
             tid: t._id,
+            owner: t.owner,
             status: status
           })
         })
@@ -91,10 +95,15 @@ events.onUpdateComments = function (socket) {
 
 events.onUpdateAssigneeList = function (socket) {
   socket.on('updateAssigneeList', function () {
-    userSchema.getAssigneeUsers(function (err, users) {
+    roleSchema.getAgentRoles(function (err, roles) {
       if (err) return true
+      userSchema.find({ role: { $in: roles }, deleted: false }, function (err, users) {
+        if (err) return true
 
-      utils.sendToSelf(socket, 'updateAssigneeList', users)
+        var sortedUser = _.sortBy(users, 'fullname')
+
+        utils.sendToSelf(socket, 'updateAssigneeList', sortedUser)
+      })
     })
   })
 }
@@ -126,7 +135,7 @@ events.onSetAssignee = function (socket) {
           ticket = results.subscriber
           ticket.save(function (err, ticket) {
             if (err) return true
-            ticketSchema.populate(ticket, 'assignee', function (err) {
+            ticket.populate('assignee', function (err, ticket) {
               if (err) return true
 
               emitter.emit('ticket:subscriber:update', {
@@ -139,7 +148,8 @@ events.onSetAssignee = function (socket) {
                 ticketUid: ticket.uid,
                 hostname: socket.handshake.headers.host
               })
-              emitter.emit('ticket:updated', ticketId)
+
+              // emitter.emit('ticket:updated', ticket)
               utils.sendToAllConnectedClients(io, 'updateAssignee', ticket)
             })
           })
@@ -167,7 +177,7 @@ events.onSetTicketType = function (socket) {
           ticketSchema.populate(tt, 'type', function (err) {
             if (err) return true
 
-            emitter.emit('ticket:updated', ticketId)
+            // emitter.emit('ticket:updated', tt)
             utils.sendToAllConnectedClients(io, 'updateTicketType', tt)
           })
         })
@@ -196,7 +206,7 @@ events.onSetTicketPriority = function (socket) {
           t.save(function (err, tt) {
             if (err) return true
 
-            emitter.emit('ticket:updated', ticketId)
+            // emitter.emit('ticket:updated', tt)
             utils.sendToAllConnectedClients(io, 'updateTicketPriority', tt)
           })
         })
@@ -218,7 +228,7 @@ events.onClearAssignee = function (socket) {
         t.save(function (err, tt) {
           if (err) return true
 
-          emitter.emit('ticket:updated', ticketId)
+          // emitter.emit('ticket:updated', tt)
           utils.sendToAllConnectedClients(io, 'updateAssignee', tt)
         })
       })
@@ -246,9 +256,34 @@ events.onSetTicketGroup = function (socket) {
           ticketSchema.populate(tt, 'group', function (err) {
             if (err) return true
 
-            emitter.emit('ticket:updated', ticketId)
+            // emitter.emit('ticket:updated', tt)
             utils.sendToAllConnectedClients(io, 'updateTicketGroup', tt)
           })
+        })
+      })
+    })
+  })
+}
+
+events.onSetTicketDueDate = function (socket) {
+  socket.on('setTicketDueDate', function (data) {
+    var ticketId = data.ticketId
+    var dueDate = data.dueDate
+    var ownerId = socket.request.user._id
+
+    if (_.isUndefined(ticketId)) return true
+
+    ticketSchema.getTicketById(ticketId, function (err, ticket) {
+      if (err) return true
+
+      ticket.setTicketDueDate(ownerId, dueDate, function (err, t) {
+        if (err) return true
+
+        t.save(function (err, tt) {
+          if (err) return true
+
+          // emitter.emit('ticket:updated', tt)
+          utils.sendToAllConnectedClients(io, 'updateTicketDueDate', tt)
         })
       })
     })
@@ -263,24 +298,18 @@ events.onSetTicketIssue = function (socket) {
     var ownerId = socket.request.user._id
     if (_.isUndefined(ticketId) || _.isUndefined(issue)) return true
 
-    marked.setOptions({
-      breaks: true
-    })
-    var markedIssue = marked(issue)
-
     ticketSchema.getTicketById(ticketId, function (err, ticket) {
       if (err) return true
 
       ticket.setSubject(ownerId, subject, function (err, ticket) {
         if (err) return true
 
-        ticket.setIssue(ownerId, markedIssue, function (err, t) {
+        ticket.setIssue(ownerId, issue, function (err, t) {
           if (err) return true
 
           t.save(function (err, tt) {
             if (err) return true
 
-            // emitter.emit('ticket:updated', ticketId);
             utils.sendToAllConnectedClients(io, 'updateTicketIssue', tt)
           })
         })
@@ -300,6 +329,8 @@ events.onSetCommentText = function (socket) {
     marked.setOptions({
       breaks: true
     })
+
+    comment = sanitizeHtml(comment).trim()
 
     var markedComment = marked(comment)
 
@@ -363,7 +394,7 @@ events.onSetNoteText = function (socket) {
         ticket.save(function (err, tt) {
           if (err) return winston.error(err)
 
-          utils.sendToAllConnectedClients(io, 'updateComments', tt)
+          utils.sendToAllConnectedClients(io, 'updateNotes', tt)
         })
       })
     })
@@ -386,7 +417,7 @@ events.onRemoveNote = function (socket) {
         t.save(function (err, tt) {
           if (err) return true
 
-          utils.sendToAllConnectedClients(io, 'updateComments', tt)
+          utils.sendToAllConnectedClients(io, 'updateNotes', tt)
         })
       })
     })
@@ -404,7 +435,7 @@ events.onRefreshTicketAttachments = function (socket) {
       var user = socket.request.user
       if (_.isUndefined(user)) return true
 
-      var canRemoveAttachments = permissions.canThis(user.role, 'ticket:removeAttachment')
+      var canRemoveAttachments = permissions.canThis(user.role, 'tickets:removeAttachment')
 
       var data = {
         ticket: ticket,
@@ -424,11 +455,7 @@ events.onRefreshTicketTags = function (socket) {
     ticketSchema.getTicketById(ticketId, function (err, ticket) {
       if (err) return true
 
-      var data = {
-        ticket: ticket
-      }
-
-      utils.sendToAllConnectedClients(io, 'updateTicketTags', data)
+      utils.sendToAllConnectedClients(io, 'updateTicketTags', ticket)
     })
   })
 }

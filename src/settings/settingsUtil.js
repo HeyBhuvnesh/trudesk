@@ -17,6 +17,8 @@ var async = require('async')
 var jsStringEscape = require('js-string-escape')
 var settingSchema = require('../models/setting')
 var ticketTypeSchema = require('../models/tickettype')
+var roleSchema = require('../models/role')
+var roleOrderSchema = require('../models/roleorder')
 
 var util = {}
 
@@ -75,6 +77,8 @@ util.getSettings = function (callback) {
     s.minSubjectLength = parseSetting(settings, 'ticket:minlength:subject', 10)
     s.minIssueLength = parseSetting(settings, 'ticket:minlength:issue', 10)
 
+    s.defaultUserRole = parseSetting(settings, 'role:user:default', '')
+
     s.mailerEnabled = parseSetting(settings, 'mailer:enable', false)
     s.mailerHost = parseSetting(settings, 'mailer:host', '')
     s.mailerSSL = parseSetting(settings, 'mailer:ssl', false)
@@ -97,6 +101,14 @@ util.getSettings = function (callback) {
     s.showTour = parseSetting(settings, 'showTour:enable', false)
     s.showOverdueTickets = parseSetting(settings, 'showOverdueTickets:enable', true)
 
+    // Elasticsearch
+    s.elasticSearchEnabled = parseSetting(settings, 'es:enable', false)
+    s.elasticSearchHost = parseSetting(settings, 'es:host', '')
+    s.elasticSearchPort = parseSetting(settings, 'es:port', 9200)
+    s.elasticSearchConfigured = {
+      value: s.elasticSearchEnabled.value !== false && !_.isEmpty(s.elasticSearchHost.value)
+    }
+
     s.tpsEnabled = parseSetting(settings, 'tps:enable', false)
     s.tpsUsername = parseSetting(settings, 'tps:username', '')
     s.tpsApiKey = parseSetting(settings, 'tps:apikey', '')
@@ -106,8 +118,6 @@ util.getSettings = function (callback) {
 
     s.privacyPolicy = parseSetting(settings, 'legal:privacypolicy', '')
     s.privacyPolicy.value = jsStringEscape(s.privacyPolicy.value)
-
-    content.data.settings = s
 
     async.parallel(
       [
@@ -156,10 +166,28 @@ util.getSettings = function (callback) {
 
             return done()
           })
+        },
+        function (done) {
+          roleSchema.getRoles(function (err, roles) {
+            if (err) return done(err)
+            roleOrderSchema.getOrder(function (err, roleOrder) {
+              if (err) return done(err)
+              roleOrder = roleOrder.order
+
+              if (_.size(roleOrder) > 0) {
+                content.data.roles = _.map(roleOrder, function (roID) {
+                  return _.find(roles, { _id: roID })
+                })
+              } else content.data.roles = roles
+
+              return done()
+            })
+          })
         }
       ],
       function (err) {
         if (err) return callback(err)
+        content.data.settings = s
 
         return callback(null, content)
       }

@@ -34,7 +34,7 @@ module.exports = function (app, db, callback) {
   app.disable('x-powered-by')
 
   app.set('views', path.join(__dirname, '../views/'))
-  global.HandleBars = HandleBars
+
   app.engine(
     'hbs',
     hbs.express4({
@@ -101,6 +101,7 @@ module.exports = function (app, db, callback) {
         app.use('/mobile', express.static(path.join(__dirname, '../../', 'mobile')))
 
         app.use('/assets', express.static(path.join(__dirname, '../../public/uploads/assets')))
+        app.use('/uploads/users', express.static(path.join(__dirname, '../../public/uploads/users')))
         app.use('/uploads', middleware.hasAuth, express.static(path.join(__dirname, '../../public/uploads')))
         app.use(
           '/backups',
@@ -149,7 +150,7 @@ function allowCrossDomain (req, res, next) {
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS')
   res.setHeader(
     'Access-Control-Allow-Headers',
-    'DNT,X-Mx-ReqToken,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,accesstoken'
+    'DNT,X-Mx-ReqToken,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,accesstoken,X-RToken,X-Token'
   )
 
   if (req.method === 'OPTIONS') {

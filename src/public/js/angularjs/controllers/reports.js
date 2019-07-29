@@ -1,16 +1,16 @@
-/**
-      .                              .o8                     oooo
-   .o8                             "888                     `888
- .o888oo oooo d8b oooo  oooo   .oooo888   .ooooo.   .oooo.o  888  oooo
-   888   `888""8P `888  `888  d88' `888  d88' `88b d88(  "8  888 .8P'
-   888    888      888   888  888   888  888ooo888 `"Y88b.   888888.
-   888 .  888      888   888  888   888  888    .o o.  )88b  888 `88b.
-   "888" d888b     `V88V"V8P' `Y8bod88P" `Y8bod8P' 8""888P' o888o o888o
- ========================================================================
- Created:    01/24/2016
- Author:     Chris Brame
-
- **/
+/*
+ *       .                             .o8                     oooo
+ *    .o8                             "888                     `888
+ *  .o888oo oooo d8b oooo  oooo   .oooo888   .ooooo.   .oooo.o  888  oooo
+ *    888   `888""8P `888  `888  d88' `888  d88' `88b d88(  "8  888 .8P'
+ *    888    888      888   888  888   888  888ooo888 `"Y88b.   888888.
+ *    888 .  888      888   888  888   888  888    .o o.  )88b  888 `88b.
+ *    "888" d888b     `V88V"V8P' `Y8bod88P" `Y8bod8P' 8""888P' o888o o888o
+ *  ========================================================================
+ *  Author:     Chris Brame
+ *  Updated:    1/20/19 4:43 PM
+ *  Copyright (c) 2014-2019. All rights reserved.
+ */
 
 define(['angular', 'underscore', 'jquery', 'moment', 'modules/helpers', 'formvalidator', 'history'], function (
   angular,
@@ -89,6 +89,12 @@ define(['angular', 'underscore', 'jquery', 'moment', 'modules/helpers', 'formval
             break
           case 'tickets_by_users':
             changeView('#report_tickets_by_users')
+            break
+          case 'tickets_by_assignees':
+            changeView('#report_tickets_by_assignees')
+            break
+          case 'tickets_by_teams':
+            changeView('#report_tickets_by_teams')
             break
           default:
             break
@@ -265,6 +271,58 @@ define(['angular', 'underscore', 'jquery', 'moment', 'modules/helpers', 'formval
               .then(
                 function successCallback (response) {
                   downloadReport(response, 'report_tickets_by_users__' + data['filterDate_Start'])
+                },
+                function errorCallback (response) {
+                  $log.log(response.statusText)
+                }
+              )
+              .then(function () {
+                hideLoader()
+              })
+            break
+          case 'assignees':
+            showLoader()
+            var assignees = form.find('select#assignees').val()
+            groups = form.find('select#groups').val()
+            $http({
+              method: 'POST',
+              url: '/api/v1/reports/generate/tickets_by_assignee',
+              data: {
+                startDate: startDate,
+                endDate: endDate,
+                groups: groups,
+                assignees: assignees
+              },
+              headers: { 'Content-Type': 'application/json' }
+            })
+              .then(
+                function successCallback (response) {
+                  downloadReport(response, 'report_tickets_by_assignee__' + data['filterDate_Start'])
+                },
+                function errorCallback (response) {
+                  $log.log(response.statusText)
+                }
+              )
+              .then(function () {
+                hideLoader()
+              })
+            break
+          case 'team':
+            showLoader()
+            var teams = form.find('select#teams').val()
+            $http({
+              method: 'POST',
+              url: '/api/v1/reports/generate/tickets_by_team',
+              data: {
+                startDate: startDate,
+                endDate: endDate,
+                teams: teams
+              },
+              headers: { 'Content-Type': 'application/json' }
+            })
+              .then(
+                function successCallback (response) {
+                  downloadReport(response, 'report_tickets_by_teams__' + data['filterDate_Start'])
                 },
                 function errorCallback (response) {
                   $log.log(response.statusText)

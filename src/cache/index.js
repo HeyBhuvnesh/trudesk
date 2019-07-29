@@ -1,30 +1,24 @@
 /*
-     .                              .o8                     oooo
-   .o8                             "888                     `888
- .o888oo oooo d8b oooo  oooo   .oooo888   .ooooo.   .oooo.o  888  oooo
-   888   `888""8P `888  `888  d88' `888  d88' `88b d88(  "8  888 .8P'
-   888    888      888   888  888   888  888ooo888 `"Y88b.   888888.
-   888 .  888      888   888  888   888  888    .o o.  )88b  888 `88b.
-   "888" d888b     `V88V"V8P' `Y8bod88P" `Y8bod8P' 8""888P' o888o o888o
- ========================================================================
- Created:    02/16/2016
- Author:     Chris Brame
-
+ *       .                             .o8                     oooo
+ *    .o8                             "888                     `888
+ *  .o888oo oooo d8b oooo  oooo   .oooo888   .ooooo.   .oooo.o  888  oooo
+ *    888   `888""8P `888  `888  d88' `888  d88' `88b d88(  "8  888 .8P'
+ *    888    888      888   888  888   888  888ooo888 `"Y88b.   888888.
+ *    888 .  888      888   888  888   888  888    .o o.  )88b  888 `88b.
+ *    "888" d888b     `V88V"V8P' `Y8bod88P" `Y8bod8P' 8""888P' o888o o888o
+ *  ========================================================================
+ *  Author:     Chris Brame
+ *  Updated:    1/20/19 4:43 PM
+ *  Copyright (c) 2014-2019. All rights reserved.
  */
 
 var NodeCache = require('node-cache')
-
 var async = require('async')
-
 var path = require('path')
-
 var nconf = require('nconf')
-
 var _ = require('lodash')
-
 var winston = require('winston')
-
-var moment = require('moment')
+var moment = require('moment-timezone')
 
 var truCache = {}
 var cache
@@ -45,7 +39,7 @@ winston.add(winston.transports.Console, {
       ' ' +
       date.toTimeString().substr(0, 8) +
       ' [Child:Cache:' +
-      global.process.pid +
+      process.pid +
       ']'
     )
   },
@@ -63,7 +57,7 @@ function loadConfig () {
 }
 
 var refreshTimer
-var lastUpdated = moment()
+var lastUpdated = moment.utc().tz(process.env.TIMEZONE || 'America/New_York')
 
 truCache.init = function (callback) {
   cache = new NodeCache({
@@ -72,7 +66,7 @@ truCache.init = function (callback) {
 
   truCache.refreshCache(function () {
     winston.debug('Cache Loaded')
-    restartRefreshClock()
+    // restartRefreshClock()
 
     return callback()
   })
@@ -109,9 +103,7 @@ truCache.refreshCache = function (callback) {
           [
             function (done) {
               var ticketStats = require('./ticketStats')
-              // console.time('test');
               ticketStats(tickets, function (err, stats) {
-                // console.timeEnd('test');
                 if (err) return done(err)
                 var expire = 3600 // 1 hour
                 cache.set('tickets:overview:lastUpdated', stats.lastUpdated, expire)
@@ -140,11 +132,6 @@ truCache.refreshCache = function (callback) {
                 cache.set('tickets:overview:e365:closedTickets', stats.e365.closedTickets, expire)
                 cache.set('tickets:overview:e365:responseTime', stats.e365.avgResponse, expire)
                 cache.set('tickets:overview:e365:graphData', stats.e365.graphData, expire)
-
-                // cache.set('tickets:overview:lifetime:ticketCount', stats.lifetime.tickets, expire);
-                // cache.set('tickets:overview:lifetime:closedTickets', stats.lifetime.closedTickets, expire);
-                // cache.set('tickets:overview:lifetime:responseTime', stats.lifetime.avgResponse, expire);
-                // cache.set('tickets:overview:lifetime:graphData', stats.lifetime.graphData, expire);
 
                 return done()
               })
@@ -228,6 +215,7 @@ truCache.refreshCache = function (callback) {
             }
           ],
           function (err) {
+            tickets = null
             return cb(err)
           }
         )
@@ -237,6 +225,8 @@ truCache.refreshCache = function (callback) {
       if (err) return winston.warn(err)
       // Send to parent
       process.send({ cache: cache })
+
+      cache.flushAll()
 
       if (_.isFunction(callback)) {
         return callback(err)
@@ -283,6 +273,8 @@ truCache.refreshCache = function (callback) {
         winston.error(err)
         throw new Error(err)
       }
+
+      return process.exit(0)
     })
   })
 })()

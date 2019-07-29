@@ -1,16 +1,16 @@
 /*
-     .                              .o8                     oooo
-   .o8                             "888                     `888
- .o888oo oooo d8b oooo  oooo   .oooo888   .ooooo.   .oooo.o  888  oooo
-   888   `888""8P `888  `888  d88' `888  d88' `88b d88(  "8  888 .8P'
-   888    888      888   888  888   888  888ooo888 `"Y88b.   888888.
-   888 .  888      888   888  888   888  888    .o o.  )88b  888 `88b.
-   "888" d888b     `V88V"V8P' `Y8bod88P" `Y8bod8P' 8""888P' o888o o888o
- ========================================================================
- Created:    02/15/2016
- Author:     Chris Brame
-
- **/
+ *       .                             .o8                     oooo
+ *    .o8                             "888                     `888
+ *  .o888oo oooo d8b oooo  oooo   .oooo888   .ooooo.   .oooo.o  888  oooo
+ *    888   `888""8P `888  `888  d88' `888  d88' `88b d88(  "8  888 .8P'
+ *    888    888      888   888  888   888  888ooo888 `"Y88b.   888888.
+ *    888 .  888      888   888  888   888  888    .o o.  )88b  888 `88b.
+ *    "888" d888b     `V88V"V8P' `Y8bod88P" `Y8bod8P' 8""888P' o888o o888o
+ *  ========================================================================
+ *  Author:     Chris Brame
+ *  Updated:    1/20/19 4:43 PM
+ *  Copyright (c) 2014-2019. All rights reserved.
+ */
 
 var _ = require('lodash')
 var async = require('async')
@@ -48,8 +48,11 @@ function buildGraphData (arr, days, callback) {
     obj.date = d.format('YYYY-MM-DD')
 
     obj.value = counted[obj.date] === undefined ? 0 : counted[obj.date]
+
     graphData.push(obj)
   }
+
+  counted = null
 
   return callback(graphData)
 }
@@ -96,11 +99,8 @@ var init = function (tickets, callback) {
     .minute(59)
     .second(59)
   var e30 = today.clone().subtract(30, 'd')
-
   var e60 = today.clone().subtract(60, 'd')
-
   var e90 = today.clone().subtract(90, 'd')
-
   var e180 = today.clone().subtract(180, 'd')
   // e365 = today.clone().subtract(365, 'd');
 
