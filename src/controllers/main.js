@@ -18,6 +18,7 @@ var path = require('path')
 var passport = require('passport')
 var winston = require('winston')
 var pkg = require('../../package')
+var { languageIn } = require('../data/in')
 
 var mainController = {}
 
@@ -86,9 +87,27 @@ mainController.about = function (req, res) {
 
 mainController.dashboard = function (req, res) {
   var content = {}
-  content.title = 'Dashboard'
+  content.title = languageIn.DASHBOARD
+  content.days1 = languageIn.LAST_30_DAYS
+  content.days2 = languageIn.LAST_60_DAYS
+  content.days3 = languageIn.LAST_90_DAYS
+  content.days4 = languageIn.LAST_180_DAYS
+  content.days5 = languageIn.LAST_365_DAYS
+  content.lastUpdated = languageIn.LAST_ACTIVITY
+  content.tickets = languageIn.TICKETS
+  content.completed = languageIn.COMPLETED
+  content.statistics = languageIn.STATISTICS
+  content.value = languageIn.VALUE
+  content.subject = languageIn.SUBJECT
+  content.status = languageIn.STATUS
+  content.top5groups = languageIn.TOP5GROUPS
+  content.top10tags = languageIn.TOP10TAGS
+  content.last = languageIn.LAST
+  content.overdues = languageIn.OVERDUE
+  content.breakdown = languageIn.BREAKDOWN
+  content.avg = languageIn.AVG_RESPONSE_TIME
+  content.quick = languageIn.QUICK
   content.nav = 'dashboard'
-
   content.data = {}
   content.data.user = req.user
   content.data.common = req.viewdata

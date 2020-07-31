@@ -90,7 +90,8 @@ var ticketSchema = mongoose.Schema({
     ref: 'tickettypes'
   },
   status: { type: Number, default: 0, required: true, index: true },
-
+  phone: String,
+  idcard: String,
   priority: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'priorities',

@@ -19,7 +19,7 @@ import SidebarItem from 'components/Nav/SidebarItem'
 import NavSeparator from 'components/Nav/NavSeperator'
 import Submenu from 'components/Nav/Submenu'
 import SubmenuItem from 'components/Nav/SubmenuItem'
-
+import {languageIn} from  '../../../../data/in'
 import { updateNavChange } from '../../../actions/nav'
 
 import Helpers from 'lib/helpers'
@@ -81,7 +81,7 @@ class Sidebar extends React.Component {
       <ul className='side-nav'>
         {sessionUser && Helpers.canUser('agent:*', true) && (
           <SidebarItem
-            text='Dashboard'
+            text={languageIn.DASHBOARD}
             icon='dashboard'
             href='/dashboard'
             class='navHome'
@@ -90,7 +90,7 @@ class Sidebar extends React.Component {
         )}
         {sessionUser && Helpers.canUser('tickets:view') && (
           <SidebarItem
-            text='Tickets'
+            text={languageIn.TICKETS}
             icon='assignment'
             href='/tickets'
             class='navTickets no-ajaxy'
@@ -100,34 +100,34 @@ class Sidebar extends React.Component {
           >
             <Submenu id='tickets'>
               <SubmenuItem
-                text='Active'
+                text={languageIn.ACTIVE}
                 icon='timer'
                 href='/tickets/active'
                 active={activeSubItem === 'tickets-active'}
               />
               <SubmenuItem
-                text='Assigned'
+                text={languageIn.ASSIGNED}
                 icon='assignment_ind'
                 href='/tickets/assigned'
                 active={activeSubItem === 'tickets-assigned'}
               />
               <SubmenuItem
-                text='Unassigned'
+                text={languageIn.UN_ASSIGN}
                 icon='person_add_disabled'
                 href='/tickets/unassigned'
                 active={activeSubItem === 'tickets-unassigned'}
               />
               <NavSeparator />
-              <SubmenuItem text='New' icon='&#xE24D;' href='/tickets/new' active={activeSubItem === 'tickets-new'} />
+              <SubmenuItem text={languageIn.NEW} icon='&#xE24D;' href='/tickets/new' active={activeSubItem === 'tickets-new'} />
               <SubmenuItem
-                text='Pending'
+                text={languageIn.PENDING}
                 icon='&#xE629;'
                 href='/tickets/pending'
                 active={activeSubItem === 'tickets-pending'}
               />
-              <SubmenuItem text='Open' icon='&#xE2C8;' href='/tickets/open' active={activeSubItem === 'tickets-open'} />
+              <SubmenuItem   text={languageIn.OPEN} icon='&#xE2C8;' href='/tickets/open' active={activeSubItem === 'tickets-open'} />
               <SubmenuItem
-                text='Closed'
+                text={languageIn.CLOSED}
                 icon='&#xE2C7;'
                 href='/tickets/closed'
                 active={activeSubItem === 'tickets-closed'}
@@ -136,7 +136,7 @@ class Sidebar extends React.Component {
           </SidebarItem>
         )}
         <SidebarItem
-          text='Messages'
+          text={languageIn.MESSAGES}
           icon='chat'
           href='/messages'
           class='navMessages'
@@ -144,7 +144,7 @@ class Sidebar extends React.Component {
         />
         {sessionUser && Helpers.canUser('accounts:view') && (
           <SidebarItem
-            text='Accounts'
+            text={languageIn.ACCOUNT}
             icon='&#xE7FD;'
             href='/accounts'
             class='navAccounts'
@@ -156,14 +156,14 @@ class Sidebar extends React.Component {
               <Submenu id='accounts'>
                 <SubmenuItem
                   href={'/accounts/customers'}
-                  text={'Customers'}
+                  text={languageIn.CUSTOMER}
                   icon={'account_box'}
                   active={activeSubItem === 'accounts-customers'}
                 />
                 {sessionUser && Helpers.canUser('agent:*', true) && (
                   <SubmenuItem
                     href={'/accounts/agents'}
-                    text={'Agents'}
+                    text={languageIn.AGENTS}
                     icon={'account_circle'}
                     active={activeSubItem === 'accounts-agents'}
                   />
@@ -171,7 +171,7 @@ class Sidebar extends React.Component {
                 {sessionUser && Helpers.canUser('admin:*') && (
                   <SubmenuItem
                     href={'/accounts/admins'}
-                    text={'Admins'}
+                    text={languageIn.ADMINS}
                     icon={'how_to_reg'}
                     active={activeSubItem === 'accounts-admins'}
                   />
@@ -182,7 +182,7 @@ class Sidebar extends React.Component {
         )}
         {sessionUser && Helpers.canUser('groups:view') && (
           <SidebarItem
-            text='Customer Groups'
+            text={languageIn.CUSTOMER_GROUPS}
             icon='supervisor_account'
             href='/groups'
             class='navGroups'
@@ -190,11 +190,11 @@ class Sidebar extends React.Component {
           />
         )}
         {sessionUser && Helpers.canUser('teams:view') && (
-          <SidebarItem text='Teams' icon='wc' href='/teams' class='navTeams' active={activeItem === 'teams'} />
+          <SidebarItem   text={languageIn.TEAMS} icon='wc' href='/teams' class='navTeams' active={activeItem === 'teams'} />
         )}
         {sessionUser && Helpers.canUser('departments:view') && (
           <SidebarItem
-            text='Departments'
+            text={languageIn.DEPARTMENTS}
             icon='domain'
             href='/departments'
             class='navTeams'
@@ -203,7 +203,7 @@ class Sidebar extends React.Component {
         )}
         {sessionUser && Helpers.canUser('reports:view') && (
           <SidebarItem
-            text='Reports'
+            text={languageIn.REPORTS}
             icon='assessment'
             href='/reports/generate'
             class='navReports no-ajaxy'
@@ -213,20 +213,20 @@ class Sidebar extends React.Component {
           >
             <Submenu id='reports'>
               <SubmenuItem
-                text='Generate'
+                text={languageIn.GENERATE}
                 icon='timeline'
                 href='/reports/generate'
                 active={activeSubItem === 'reports-generate'}
               />
               <NavSeparator />
               <SubmenuItem
-                text='Group Breakdown'
+                text={languageIn.GROUP + languageIn.BREAKDOWN}
                 icon='supervisor_account'
                 href='/reports/breakdown/group'
                 active={activeSubItem === 'reports-breakdown-group'}
               />
               <SubmenuItem
-                text='User Breakdown'
+                text={languageIn.USERS +languageIn.BREAKDOWN}
                 icon='perm_identity'
                 href='/reports/breakdown/user'
                 active={activeSubItem === 'reports-breakdown-user'}
@@ -239,7 +239,7 @@ class Sidebar extends React.Component {
 
         {sessionUser && Helpers.canUser('notices:view') && (
           <SidebarItem
-            text='Notices'
+            text={languageIn.NOTICES}
             icon='warning'
             href='/notices'
             class='navNotices'
@@ -249,7 +249,7 @@ class Sidebar extends React.Component {
 
         {sessionUser && Helpers.canUser('settings:edit') && (
           <SidebarItem
-            text='Settings'
+            text={languageIn.SETTINGS}
             icon='settings'
             href='/settings/general'
             class='navSettings no-ajaxy'
@@ -258,27 +258,27 @@ class Sidebar extends React.Component {
             active={activeItem === 'settings'}
           >
             <Submenu id='settings'>
-              <SubmenuItem text='General' icon='tune' href='/settings' active={activeSubItem === 'settings-general'} />
+              <SubmenuItem text={languageIn.GENERAL} icon='tune' href='/settings' active={activeSubItem === 'settings-general'} />
               <SubmenuItem
-                text='Appearance'
+                text={languageIn.APPEARANCE}
                 icon='style'
                 href='/settings/appearance'
                 active={activeSubItem === 'settings-appearance'}
               />
               <SubmenuItem
-                text='Tickets'
+                text={languageIn.TICKETS}
                 icon='assignment'
                 href='/settings/tickets'
                 active={activeSubItem === 'settings-tickets'}
               />
               <SubmenuItem
-                text='Permissions'
+                text={languageIn.PERMISSIONS}
                 icon='security'
                 href='/settings/permissions'
                 active={activeSubItem === 'settings-permissions'}
               />
               <SubmenuItem
-                text='Mailer'
+                text={languageIn.MAILER}
                 icon='email'
                 href='/settings/mailer'
                 active={activeSubItem === 'settings-mailer'}
@@ -291,26 +291,26 @@ class Sidebar extends React.Component {
                 active={activeSubItem === 'settings-elasticsearch'}
               />
               <SubmenuItem
-                text='Push Service'
+                text={languageIn.PUSH_SERVICE}
                 icon='mobile_friendly'
                 href='/settings/tps'
                 active={activeSubItem === 'settings-tps'}
               />
               <SubmenuItem
-                text='Backup/Restore'
+                text={languageIn.BACKUP_RESTORE}
                 icon='archive'
                 href='/settings/backup'
                 active={activeSubItem === 'settings-backup'}
               />
               <SubmenuItem
-                text='Legal'
+                text={languageIn.LEGAL}
                 icon='gavel'
                 href='/settings/legal'
                 active={activeSubItem === 'settings-legal'}
               />
               {sessionUser && Helpers.canUser('settings:logs') && (
                 <SubmenuItem
-                  text='Logs'
+                  text={languageIn.LOGS}
                   icon='remove_from_queue'
                   href='/settings/logs'
                   hasSeperator={true}
@@ -321,8 +321,8 @@ class Sidebar extends React.Component {
           </SidebarItem>
         )}
         <NavSeparator />
-        <SidebarItem href='/about' icon='help' text='About' active={activeItem === 'about'} />
-        <SidebarItem href={'https://www.trudesk.io'} icon={'cloud'} text={'Cloud'} target={'_blank'} />
+        <SidebarItem href='/about' icon='help'   text={languageIn.ABOUT} active={activeItem === 'about'} />
+        <SidebarItem href={'https://www.trudesk.io'} icon={'cloud'}   text={languageIn.CLOUD} target={'_blank'} />
       </ul>
     )
   }

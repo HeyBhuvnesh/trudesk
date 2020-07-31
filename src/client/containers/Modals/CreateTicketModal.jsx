@@ -132,6 +132,8 @@ class CreateTicketModal extends React.Component {
     if (allowAgentUserTickets) data.owner = this.ownerSelect.value
 
     data.subject = e.target.subject.value
+    data.phone = e.target.phone.value
+    data.idcard = e.target.idcard.value
     data.group = this.groupSelect.value
     data.type = this.typeSelect.value
     data.tags = this.tagSelect.value
@@ -190,6 +192,32 @@ class CreateTicketModal extends React.Component {
               data-validation='length'
               data-validation-length={`min${viewdata.ticketSettings.minSubject}`}
               data-validation-error-msg={`Please enter a valid Subject. Subject must contain at least ${
+                viewdata.ticketSettings.minSubject
+              } characters.`}
+            />
+          </div> 
+          <div className='uk-margin-medium-bottom'>
+            <label>Phone Number</label>
+            <input
+              type='text'
+              name={'phone'}
+              className={'md-input'}
+              data-validation='length'
+              data-validation-length={`min${viewdata.ticketSettings.minSubject}`}
+              data-validation-error-msg={`Please enter a valid Phone. Phone number must contain at least ${
+                viewdata.ticketSettings.minSubject
+              } characters.`}
+            />
+          </div>
+          <div className='uk-margin-medium-bottom'>
+            <label>Identity Card Number</label>
+            <input
+              type='text'
+              name={'idcard'}
+              className={'md-input'}
+              data-validation='length'
+              data-validation-length={`min${viewdata.ticketSettings.minSubject}`}
+              data-validation-error-msg={`Please enter a valid ID. ID Card Number must contain at least ${
                 viewdata.ticketSettings.minSubject
               } characters.`}
             />

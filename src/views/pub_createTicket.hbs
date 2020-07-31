@@ -324,6 +324,10 @@
                     <input type="text" id="ticket-subject" name="ticket-subject" class="md-input" required />
                 </div>
                 <div class="uk-margin-medium-bottom">
+                    <label for="ticket-subject">Phone Number</label>
+                    <input type="text" id="ticket-phone" name="ticket-phone" class="md-input" required />
+                </div>
+                <div class="uk-margin-medium-bottom">
                     <label for="ticket-issue">Issue</label>
                     <textarea name="ticket-issue" id="ticket-issue" cols="30" rows="10" class="md-input" required></textarea>
                 </div>
@@ -608,8 +612,8 @@
                 if (isDoubleClicked($(this))) return;
 
                 var adminInfoFormData = $('form#adminAccount').serializeObject();
-                var $subjectField, $issueField;
-                var $subjectValid = false, $issueValid = false;
+                var $subjectField, $issueField , $phoneField;
+                var $subjectValid = false, $issueValid = false , $phoneValid = false;
 
                 if (!adminInfoFormData['ticket-subject'] || (adminInfoFormData['ticket-subject'].length < 5)) {
                     $subjectField = $('form#adminAccount').find('input#ticket-subject');
@@ -623,6 +627,20 @@
                     $subjectField.removeClass('uk-form-danger');
 
                     $subjectValid = true;
+                }
+
+                if (!adminInfoFormData['ticket-phone'] || (adminInfoFormData['ticket-phone'].length < 5)) {
+                    $phoneField = $('form#adminAccount').find('input#ticket-phone');
+                    $phoneField.parent('.md-input-wrapper').addClass('has-error');
+                    $phoneField.parent('.md-input-wrapper').find('.md-input-bar').addClass('bottom-fix error-color');
+                    $phoneField.addClass('uk-form-danger');
+                } else {
+                    $phoneField = $('form#adminAccount').find('input#ticket-phone');
+                    $phoneField.parent('.md-input-wrapper').removeClass('has-error');
+                    $phoneField.parent('.md-input-wrapper').find('.md-input-bar').removeClass('bottom-fix error-color');
+                    $phoneField.removeClass('uk-form-danger');
+
+                    $phoneValid = true;
                 }
 
                 if (!adminInfoFormData['ticket-issue'] || (adminInfoFormData['ticket-issue'].length < 10)) {
@@ -639,12 +657,13 @@
                     $issueValid = true;
                 }
 
-                if (!$subjectValid || !$issueValid)
+                if (!$subjectValid || !$issueValid|| !$phoneValid)
                     return false;
 
                 ticket = {
                     subject: adminInfoFormData['ticket-subject'],
-                    issue: adminInfoFormData['ticket-issue']
+                    issue: adminInfoFormData['ticket-issue'],
+                    phone: adminInfoFormData['ticket-phone']
                 };
 
                 advanceSlide();

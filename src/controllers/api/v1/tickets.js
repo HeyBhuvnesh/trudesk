@@ -596,6 +596,7 @@ apiTickets.createPublicTicket = function (req, res) {
             owner: savedUser._id
           }
           ticket = new TicketSchema({
+            phone: sanitizeHtml(postData.ticket.phone).trim(),
             owner: savedUser._id,
             group: group._id,
             type: ticketType._id,
