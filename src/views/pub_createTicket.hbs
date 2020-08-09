@@ -1,19 +1,16 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>AnandMPSeva &middot; {{{title}}}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="/css/plugins.min.css">
     <link rel="stylesheet" href="/css/app.min.css">
     <style type="text/css">
-        
-        @media only screen 
-            and (min-width: 375px) 
-            and (max-width: 812px) 
-            {
-        .akash {
-            padding-top:400px;
-        }
+        @media only screen and (min-width: 375px) and (max-width: 812px) {
+            .akash {
+                padding-top: 400px;
+            }
         }
 
         html {
@@ -21,6 +18,7 @@
             height: 100%;
             font: 400 14px/20px "Roboto", Arial, sans-serif;
         }
+
         body {
             background: #fff;
             text-align: center;
@@ -129,19 +127,26 @@
             color: #A5A5A5;
         }
 
-        ::-webkit-input-placeholder { /* WebKit browsers */
-            color:    #222;
+        ::-webkit-input-placeholder {
+            /* WebKit browsers */
+            color: #222;
         }
-        :-moz-placeholder { /* Mozilla Firefox 4 to 18 */
-            color:    #222;
-            opacity:  1;
+
+        :-moz-placeholder {
+            /* Mozilla Firefox 4 to 18 */
+            color: #222;
+            opacity: 1;
         }
-        ::-moz-placeholder { /* Mozilla Firefox 19+ */
-            color:    #222;
-            opacity:  1;
+
+        ::-moz-placeholder {
+            /* Mozilla Firefox 19+ */
+            color: #222;
+            opacity: 1;
         }
-        :-ms-input-placeholder { /* Internet Explorer 10+ */
-            color:    #222;
+
+        :-ms-input-placeholder {
+            /* Internet Explorer 10+ */
+            color: #222;
         }
 
         .alert-message p {
@@ -178,7 +183,9 @@
             /*color: #E74C3C;*/
         }
 
-        .btn:hover, .btn:active, .btn:focus {
+        .btn:hover,
+        .btn:active,
+        .btn:focus {
             /*color: #222;*/
         }
 
@@ -199,21 +206,26 @@
             0% {
                 stroke-dashoffset: 290;
             }
+
             50% {
                 stroke-dashoffset: 0;
             }
+
             100% {
                 stroke-dashoffset: -290;
             }
         }
+
         .loader {
             height: 75px;
             width: 100%;
         }
+
         .loader:before {
             content: '';
             padding-top: 50px !important;
         }
+
         .loader svg {
             position: relative;
             top: 50%;
@@ -221,6 +233,7 @@
             -ms-transform: translateY(-50%);
             transform: translateY(-50%);
         }
+
         .loader svg line {
             stroke: #000;
             stroke-width: 5;
@@ -232,524 +245,559 @@
     <script src="/js/vendor.js"></script>
     <script src="/js/truRequire.js"></script>
 </head>
+
 <body>
-<div>
-    <img src="/assets/topLogo.png" alt="AnandMPSeva"/>
-</div>    
-<div class="wrapper">
-    <div class="slides akash ">
-        <div class="slide">
-            <h2 style="margin-bottom: 18px;">आनंद MP सेवा में आपका स्वागत है।</h2>
-            <p style="text-align: center;">
-                अपनी शिकायत या सुझाव दर्ज कीजिये।
-            </p>
-            <button class="btn md-btn md-btn-wave md-btn-success" data-next>शुरू कीजिये</button>
+    <div>
+        <div class="topLogo">
+            <img src="/assets/topLogo.png" alt="AnandMPSeva" />
         </div>
-
-        <div id="userInfoSlide" class="slide hide">
-            <h2 style="margin-bottom: 25px;">आपका परिचय</h2>
-            <p style="text-align: left;">
-                आपकी शिकायत दर्ज करने के लिए हमें आपकी जानकारी चाहिए होगी
-            </p>
-            <form id="userInfo" class="uk-form-stacked uk-clearfix">
-                <div class="uk-margin-medium-bottom">
-                    <label for="user-fullname">आपका पूरा नाम</label>
-                    <input id="user-fullname" name="user-fullname" class="md-input" type="text" required />
-                </div>
-        
-                <div class="uk-margin-medium-bottom">
-                    <label for="user-email">ईमेल</label>
-                    <input id="user-email" name="user-email" class="md-input" type="email" required />
-                </div>
-                <div class="uk-margin-medium-bottom">
-                    <div id="captchaImage" style="margin-bottom: 10px;"></div>
-                    <label for="captcha">कृपया सामने लिखे अक्षरों को दर्ज करें</label>
-                    <input id="captcha" name="captcha" class="md-input" type="text" required />
-                </div>
-                <div style="width: 25%; float: left;">
-                    <button class="btn md-btn md-btn-wave md-btn-primary1" type="button" data-prev>पीछे जाये</button>
-                </div>
-                <div style="width: 70%; float: right;">
-                    <button id="checkEmail" class="btn md-btn md-btn-wave md-btn-success" type="button">आगे बढे</button>
-                </div>
-            </form>
-
-            <a href="#" class="no-ajaxy" id="privacyPolicyBtn">Privacy Policy</a>
-        </div>
-        <div class="slide hide">
-            <h2 style="margin-bottom: 25px;">आपकी समस्या या विचार</h2>
-            <p style="text-align: left; margin-bottom: 25px;">
-                कृपया हमें अपनी समस्या या विचार विस्तार से बताएं।
-                <!--Remember to be as detailed as possible to ensure its resolved promptly.-->
-            </p>
-
-            <form id="adminAccount" class="uk-form-stacked uk-clearfix">
-                <div class="uk-margin-medium-bottom">
-                    <label for="ticket-subject">विषय</label>
-                    <input type="text" id="ticket-subject" name="ticket-subject" class="md-input" required />
-                </div>
-                <div class="uk-margin-medium-bottom">
-                    <label for="ticket-subject">फ़ोन नंबर</label>
-                    <input type="text" id="ticket-phone" name="ticket-phone" class="md-input" required />
-                </div>
-                <div class="uk-margin-medium-bottom">
-                    <label for="ticket-issue">आपकी शिकायत या सुझाव यहाँ लिखें</label>
-                    <textarea name="ticket-issue" id="ticket-issue" cols="30" rows="10" class="md-input" required></textarea>
+        <div class="wrapper">
+            <div class="slides akash ">
+                <div class="slide">
+                    <h2 style="margin-bottom: 18px;">आनंद MP सेवा में आपका स्वागत है।</h2>
+                    <p style="text-align: center;">
+                        अपनी शिकायत या सुझाव दर्ज कीजिये।
+                    </p>
+                    <button class="btn md-btn md-btn-wave md-btn-success" data-next>शुरू कीजिये</button>
                 </div>
 
-                <div style="width: 25%; float: left;">
-                    <button class="btn md-btn md-btn-wave md-btn-primary1" type="button" data-prev>पीछे जाये</button>
+                <div id="userInfoSlide" class="slide hide">
+                    <h2 style="margin-bottom: 25px;">आपका परिचय</h2>
+                    <p style="text-align: left;">
+                        आपकी शिकायत दर्ज करने के लिए हमें आपकी जानकारी चाहिए होगी
+                    </p>
+                    <form id="userInfo" class="uk-form-stacked uk-clearfix">
+                        <div class="uk-margin-medium-bottom">
+                            <label for="user-fullname">आपका पूरा नाम</label>
+                            <input id="user-fullname" name="user-fullname" class="md-input" type="text" required />
+                        </div>
+
+                        <div class="uk-margin-medium-bottom">
+                            <label for="user-email">ईमेल</label>
+                            <input id="user-email" name="user-email" class="md-input" type="email" required />
+                        </div>
+                        <div class="uk-margin-medium-bottom">
+                            <div id="captchaImage" style="margin-bottom: 10px;"></div>
+                            <label for="captcha">कृपया सामने लिखे अक्षरों को दर्ज करें</label>
+                            <input id="captcha" name="captcha" class="md-input" type="text" required />
+                        </div>
+                        <div style="width: 25%; float: left;">
+                            <button class="btn md-btn md-btn-wave md-btn-primary1" type="button" data-prev>पीछे
+                                जाये</button>
+                        </div>
+                        <div style="width: 70%; float: right;">
+                            <button id="checkEmail" class="btn md-btn md-btn-wave md-btn-success" type="button">आगे
+                                बढे</button>
+                        </div>
+                    </form>
+
+                    <a href="#" class="no-ajaxy" id="privacyPolicyBtn">Privacy Policy</a>
                 </div>
-                <div style="width: 70%; float: right;">
-                    <button class="btn md-btn md-btn-wave md-btn-success" type="button" id="submit-issue">दर्ज करें</button>
+                <div class="slide hide">
+                    <h2 style="margin-bottom: 25px;">आपकी समस्या या विचार</h2>
+                    <p style="text-align: left; margin-bottom: 25px;">
+                        कृपया हमें अपनी समस्या या विचार विस्तार से बताएं।
+                        <!--Remember to be as detailed as possible to ensure its resolved promptly.-->
+                    </p>
+
+                    <form id="adminAccount" class="uk-form-stacked uk-clearfix">
+                        <div class="uk-margin-medium-bottom">
+                            <label for="ticket-subject">विषय</label>
+                            <input type="text" id="ticket-subject" name="ticket-subject" class="md-input" required />
+                        </div>
+                        <div class="uk-margin-medium-bottom">
+                            <label for="ticket-subject">फ़ोन नंबर</label>
+                            <input type="text" id="ticket-phone" name="ticket-phone" class="md-input" required />
+                        </div>
+                        <div class="uk-margin-medium-bottom">
+                            <label for="ticket-issue">आपकी शिकायत या सुझाव यहाँ लिखें</label>
+                            <textarea name="ticket-issue" id="ticket-issue" cols="30" rows="10" class="md-input"
+                                required></textarea>
+                        </div>
+
+                        <div style="width: 25%; float: left;">
+                            <button class="btn md-btn md-btn-wave md-btn-primary1" type="button" data-prev>पीछे
+                                जाये</button>
+                        </div>
+                        <div style="width: 70%; float: right;">
+                            <button class="btn md-btn md-btn-wave md-btn-success" type="button" id="submit-issue">दर्ज
+                                करें</button>
+                        </div>
+                    </form>
                 </div>
-            </form>
-        </div>
-        <div class="slide hide">
-            <h2 style="margin-bottom: 25px;">आपकी शिकायत दर्ज हो रही है...</h2>
-            <p style="text-align: left;">शिकायत दर्ज करने के लिए धन्यवाद. भविष्य के टिकट देखने और बनाने के लिए आपको लॉगिन विवरण के साथ एक ईमेल भेजा गया है.</p>
-            <div class="loader">
-                <svg style="width: 140px; " viewBox="0 0 288.9 70.1">
-                    <line class="l1" x1="0" y1="0" x2="288" y2="0"></line>
-                </svg>
+                <div class="slide hide">
+                    <h2 style="margin-bottom: 25px;">आपकी शिकायत दर्ज हो रही है...</h2>
+                    <p style="text-align: left;">शिकायत दर्ज करने के लिए धन्यवाद. भविष्य के टिकट देखने और बनाने के लिए
+                        आपको लॉगिन विवरण के साथ एक ईमेल भेजा गया है.</p>
+                    <div class="loader">
+                        <svg style="width: 140px; " viewBox="0 0 288.9 70.1">
+                            <line class="l1" x1="0" y1="0" x2="288" y2="0"></line>
+                        </svg>
+                    </div>
+                </div>
+                <div id="restartSlide" class="slide hide">
+                    <h2 style="margin-bottom: 25px;">Time to Restart</h2>
+                    <p style="text-align: left;"><i>So here we are, together sharpening a knife.</i> AnandMPSeva needs
+                        to restart to come out of install mode. Just restart it and you should get a login screen.
+                        (hopefully)!</p>
+                    <button class="btn md-btn md-btn-wave" type="button" id="restartTrudesk">restart me!</button>
+                </div>
+                <div id="errorSlide" class="slide hide">
+                    <h2 style="margin-bottom: 25px;">Crap! Something funky happened.</h2>
+                    <p style="text-align: justify;">
+                        Alright. This entire install script is in <i>beta</i>. Didn't I mention that? Anyway, there are
+                        a couple of options below to try and resolve the issue. There are some common pit falls and
+                        workarounds
+                        in the docs that may help. Submitting the issue will help identify any bugs in the script and
+                        will help others as well.
+                    </p>
+                    <pre style="text-align: left; font-size: 11px; font-weight: normal; margin-bottom: 15px;"></pre>
+                    <div style="width: 100%;">
+                        <a href="https://www.github.com/polonel/trudesk/issues/new" target="_blank"
+                            style="width: 100%; padding: 0; margin: 0;">
+                            <button class="btn md-btn md-btn-wave md-btn-danger" type="button"
+                                style="width: 100%; margin-bottom: 10px !important;">I think I should submit this
+                                issue.</button>
+                        </a>
+                        <button class="btn md-btn md-btn-wave md-btn-success" type="button"
+                            style="width: 100%; margin-bottom: 10px !important;" onclick="location.reload();">I think i
+                            will start over.</button>
+                        <a href="https://github.com/polonel/trudesk/blob/master/README.md" target="_blank"
+                            style="width: 100%; padding: 0; margin: 0;">
+                            <button class="btn md-btn md-btn-wave" type="button"
+                                style="width: 100%; margin-bottom: 10px !important;">or maybe i should read the
+                                docs!</button>
+                        </a>
+                    </div>
+                </div>
+                <div id="emailExistsSlide" class="slide hide">
+                    <h2 style="margin-bottom: 25px;">ईमेल पहले से मौजूद है</h2>
+                    <p style="text-align: justify;">
+                        यह ईमेल <span id="emailSpan" style="font-weight: bold;">email@email.com</span> पहले से मौजूद है.
+                        यदि आपके पास पहले से ही इस ईमेल का उपयोग करने वाला खाता है तो कृपया लॉगिन करें और अपना टिकट जमा
+                        करें।
+                    </p>
+                    <div style="width: 100%; margin-top: 50px;">
+                        <a href="/login" class="no-ajaxy" style="width: 100%; padding: 0; margin: 0;">
+                            <button class="btn md-btn md-btn-wave md-btn-primary" type="button"
+                                style="width: 100%; margin-bottom: 10px !important;">Login</button>
+                        </a>
+                        <button class="btn md-btn md-btn-wave" type="button"
+                            style="width: 100%; margin-bottom: 10px !important;" onclick="location.reload();">Start
+                            Over</button>
+                    </div>
+                </div>
+                <div id="ticketCreatedSlide" class="slide hide">
+                    <h2 style="margin-bottom: 25px; text-align: left;">धन्यवाद् <span id="spanfullname"
+                            style="color: #2196f3;">[fullname]</span>,</h2>
+                    <p style="text-align: justify;">
+                        आपकी शिकायत, <strong id="strongSubject">[Subject]</strong> दर्ज हो गयी है. कृपया अपने टिकट को
+                        एक्सेस करने और अपडेट करने के लिए निम्नलिखित जानकारी संग्रहीत करें।
+                    </p>
+                    <p style="text-align: left;">
+                        Username: <strong id="strongUsername">[Username]</strong> <br>
+                        Password: <strong id="strongPassword">[Password]</strong>
+                    </p>
+                    <p style="text-align: justify;">
+                        कृपया इस मुद्दे की वर्तमान स्थिति को देखने और अद्यतन करने या देखने के लिए नीचे दिए गए लिंक का
+                        अनुसरण करें।
+                    </p>
+                    <div style="width: 100%; margin-top: 50px;">
+                        <a href="/login" class="no-ajaxy" style="width: 100%; padding: 0; margin: 0;">
+                            <button class="btn md-btn md-btn-wave md-btn-primary" type="button"
+                                style="width: 100%; margin-bottom: 10px !important;">Login</button>
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
-        <div id="restartSlide" class="slide hide">
-            <h2 style="margin-bottom: 25px;">Time to Restart</h2>
-            <p style="text-align: left;"><i>So here we are, together sharpening a knife.</i> AnandMPSeva needs to restart to come out of install mode. Just restart it and you should get a login screen. (hopefully)!</p>
-            <button class="btn md-btn md-btn-wave" type="button" id="restartTrudesk">restart me!</button>
-        </div>
-        <div id="errorSlide" class="slide hide">
-            <h2 style="margin-bottom: 25px;">Crap! Something funky happened.</h2>
-            <p style="text-align: justify;">
-                Alright. This entire install script is in <i>beta</i>. Didn't I mention that? Anyway, there are a couple of options below to try and resolve the issue. There are some common pit falls and workarounds
-                in the docs that may help. Submitting the issue will help identify any bugs in the script and will help others as well.
-            </p>
-            <pre style="text-align: left; font-size: 11px; font-weight: normal; margin-bottom: 15px;"></pre>
-            <div style="width: 100%;">
-                <a href="https://www.github.com/polonel/trudesk/issues/new" target="_blank" style="width: 100%; padding: 0; margin: 0;">
-                    <button class="btn md-btn md-btn-wave md-btn-danger" type="button" style="width: 100%; margin-bottom: 10px !important;">I think I should submit this issue.</button>
-                </a>
-                <button class="btn md-btn md-btn-wave md-btn-success" type="button" style="width: 100%; margin-bottom: 10px !important;" onclick="location.reload();">I think i will start over.</button>
-                <a href="https://github.com/polonel/trudesk/blob/master/README.md" target="_blank" style="width: 100%; padding: 0; margin: 0;">
-                    <button class="btn md-btn md-btn-wave" type="button" style="width: 100%; margin-bottom: 10px !important;">or maybe i should read the docs!</button>
-                </a>
-            </div>
-        </div>
-        <div id="emailExistsSlide" class="slide hide">
-            <h2 style="margin-bottom: 25px;">ईमेल पहले से मौजूद है</h2>
-            <p style="text-align: justify;">
-               यह ईमेल <span id="emailSpan" style="font-weight: bold;">email@email.com</span> पहले से मौजूद है. यदि आपके पास पहले से ही इस ईमेल का उपयोग करने वाला खाता है तो कृपया लॉगिन करें और अपना टिकट जमा करें।
-            </p>
-            <div style="width: 100%; margin-top: 50px;">
-                <a href="/login" class="no-ajaxy" style="width: 100%; padding: 0; margin: 0;">
-                    <button class="btn md-btn md-btn-wave md-btn-primary" type="button" style="width: 100%; margin-bottom: 10px !important;">Login</button>
-                </a>
-                <button class="btn md-btn md-btn-wave" type="button" style="width: 100%; margin-bottom: 10px !important;" onclick="location.reload();">Start Over</button>
-            </div>
-        </div>
-        <div id="ticketCreatedSlide" class="slide hide">
-            <h2 style="margin-bottom: 25px; text-align: left;">धन्यवाद् <span id="spanfullname" style="color: #2196f3;">[fullname]</span>,</h2>
-            <p style="text-align: justify;">
-                आपकी शिकायत, <strong id="strongSubject">[Subject]</strong> दर्ज हो गयी है. कृपया अपने टिकट को एक्सेस करने और अपडेट करने के लिए निम्नलिखित जानकारी संग्रहीत करें।
-            </p>
-            <p style="text-align: left;">
-                Username: <strong id="strongUsername">[Username]</strong> <br>
-                Password: <strong id="strongPassword">[Password]</strong>
-            </p>
-            <p style="text-align: justify;">
-                कृपया इस मुद्दे की वर्तमान स्थिति को देखने और अद्यतन करने या देखने के लिए नीचे दिए गए लिंक का अनुसरण करें।
-            </p>
-            <div style="width: 100%; margin-top: 50px;">
-                <a href="/login" class="no-ajaxy" style="width: 100%; padding: 0; margin: 0;">
-                    <button class="btn md-btn md-btn-wave md-btn-primary" type="button" style="width: 100%; margin-bottom: 10px !important;">Login</button>
-                </a>
-            </div>
-        </div>
+
     </div>
-</div>
 
-<div id="privacyPolicySlide" class="hide">
-    <div class="white-box" style="margin-bottom: 15px;">
-        {{{data.privacyPolicy}}}
+
+    <div id="privacyPolicySlide" class="hide">
+        <div class="white-box" style="margin-bottom: 15px;">
+            {{{data.privacyPolicy}}}
+        </div>
+        <button id="privacyPolicyBackBtn" class="btn md-btn md-btn-wave md-btn-primary" type="button"
+            style="width: 100%; margin-bottom: 10px !important;">Back</button>
     </div>
-    <button id="privacyPolicyBackBtn" class="btn md-btn md-btn-wave md-btn-primary" type="button" style="width: 100%; margin-bottom: 10px !important;">Back</button>
-</div>
 
 
-<script type="text/javascript">
-    window.truRequire(['jquery', 'snackbar', 'helpers'], function(loadedModules) {
-        var $ = loadedModules[0];
-        window.Snackbar = loadedModules[1];
-        var helpers = loadedModules[2];
+    <script type="text/javascript">
+        window.truRequire(['jquery', 'snackbar', 'helpers'], function (loadedModules) {
+            var $ = loadedModules[0];
+            window.Snackbar = loadedModules[1];
+            var helpers = loadedModules[2];
 
-        $(document).ready(function() {
-            helpers.init();
-            getCaptcha();
-            var $slides = $('.slides > .slide');
-            var totalSlides = 0;
-            var activeSlide = 0;
-            $slides.each(function(idx) {
-                $(this).addClass('slide-' + idx);
-                if (idx === 0)
-                    $(this).addClass('activeSlide');
-                else
-                    $(this).addClass('hide');
+            $(document).ready(function () {
+                helpers.init();
+                getCaptcha();
+                var $slides = $('.slides > .slide');
+                var totalSlides = 0;
+                var activeSlide = 0;
+                $slides.each(function (idx) {
+                    $(this).addClass('slide-' + idx);
+                    if (idx === 0)
+                        $(this).addClass('activeSlide');
+                    else
+                        $(this).addClass('hide');
 
-                totalSlides++;
-            });
+                    totalSlides++;
+                });
 
 
-            function getCaptcha() {
-                $.ajax({
-                    method: 'GET',
-                    url: '/captcha',
-                    success: function(response) {
-                        var svg = $(response).find('svg');
-                        $('#captchaImage').append(svg);
-                    },
-                    error: function(err) {
-                        console.error(err);
+                function getCaptcha() {
+                    $.ajax({
+                        method: 'GET',
+                        url: '/captcha',
+                        success: function (response) {
+                            var svg = $(response).find('svg');
+                            $('#captchaImage').append(svg);
+                        },
+                        error: function (err) {
+                            console.error(err);
+                        }
+                    });
+                }
+
+                function isDoubleClicked(element) {
+                    //if already clicked return TRUE to indicate this click is not allowed
+                    if (element.data("isclicked")) return true;
+
+                    //mark as clicked for 1 second
+                    element.data("isclicked", true);
+                    setTimeout(function () {
+                        element.removeData("isclicked");
+                    }, 1000);
+
+                    //return FALSE to indicate this click was allowed
+                    return false;
+                }
+
+                $('button[data-next]').click(function () {
+                    if (isDoubleClicked($(this))) return;
+                    advanceSlide();
+                });
+
+                $('button[data-prev]').click(function () {
+                    if (isDoubleClicked($(this))) return;
+                    var prevSlideIdx = activeSlide - 1;
+                    var prevSlide = $('.slide-' + prevSlideIdx);
+                    if (prevSlide.length > 0) {
+                        $(this).parents('.slide').fadeOut(300, function () {
+                            prevSlide.css({ display: 'none' }).removeClass('hide');
+                            $(this).addClass('hide').removeClass('activeSlide');
+                            prevSlide.fadeIn(300, function () {
+                                prevSlide.addClass('activeSlide');
+                            });
+                        });
+
+                        activeSlide--;
                     }
                 });
-            }
 
-            function isDoubleClicked(element) {
-                //if already clicked return TRUE to indicate this click is not allowed
-                if (element.data("isclicked")) return true;
+                var userInfo = undefined;
+                var ticket = undefined;
 
-                //mark as clicked for 1 second
-                element.data("isclicked", true);
-                setTimeout(function () {
-                    element.removeData("isclicked");
-                }, 1000);
+                $('button#checkEmail').click(function () {
+                    if (isDoubleClicked($(this))) return;
+                    var userInfoFormData = $('form#userInfo').serializeObject();
+                    var $emailField, $fullnameField;
+                    var $emailValid = false, $fullnameValid = false;
 
-                //return FALSE to indicate this click was allowed
-                return false;
-            }
+                    if (!userInfoFormData['user-email'] || !validateEmail(userInfoFormData['user-email'])) {
+                        $emailField = $('form#userInfo').find('input#user-email');
+                        $emailField.parent('.md-input-wrapper').addClass('has-error');
+                        $emailField.parent('.md-input-wrapper').find('.md-input-bar').addClass('bottom-fix error-color');
+                        $emailField.addClass('uk-form-danger');
+                    } else {
+                        $emailField = $('form#userInfo').find('input#user-email');
+                        $emailField.parent('.md-input-wrapper').removeClass('has-error');
+                        $emailField.parent('.md-input-wrapper').find('.md-input-bar').removeClass('bottom-fix error-color');
+                        $emailField.removeClass('uk-form-danger');
 
-            $('button[data-next]').click(function() {
-                if (isDoubleClicked($(this))) return;
-                advanceSlide();
-            });
+                        $emailValid = true;
+                    }
 
-            $('button[data-prev]').click(function() {
-                if (isDoubleClicked($(this))) return;
-                var prevSlideIdx = activeSlide - 1;
-                var prevSlide = $('.slide-' + prevSlideIdx);
-                if (prevSlide.length > 0) {
-                    $(this).parents('.slide').fadeOut(300, function() {
-                        prevSlide.css({display: 'none'}).removeClass('hide');
-                        $(this).addClass('hide').removeClass('activeSlide');
-                        prevSlide.fadeIn(300, function() {
-                            prevSlide.addClass('activeSlide');
-                        });
-                    });
+                    if (!userInfoFormData['user-fullname'] || (userInfoFormData['user-fullname'].length < 5)) {
+                        $fullnameField = $('form#userInfo').find('input#user-fullname');
+                        $fullnameField.parent('.md-input-wrapper').addClass('has-error');
+                        $fullnameField.parent('.md-input-wrapper').find('.md-input-bar').addClass('bottom-fix error-color');
+                        $fullnameField.addClass('uk-form-danger');
+                    } else {
+                        $fullnameField = $('form#userInfo').find('input#user-fullname');
+                        $fullnameField.parent('.md-input-wrapper').removeClass('has-error');
+                        $fullnameField.parent('.md-input-wrapper').find('.md-input-bar').removeClass('bottom-fix error-color');
+                        $fullnameField.removeClass('uk-form-danger');
 
-                    activeSlide--;
-                }
-            });
+                        $fullnameValid = true;
+                    }
 
-            var userInfo = undefined;
-            var ticket = undefined;
+                    if (!$fullnameValid || !$emailValid)
+                        return false;
 
-            $('button#checkEmail').click(function() {
-                if (isDoubleClicked($(this))) return;
-                var userInfoFormData = $('form#userInfo').serializeObject();
-                var $emailField, $fullnameField;
-                var $emailValid = false, $fullnameValid = false;
-
-                if (!userInfoFormData['user-email'] || !validateEmail(userInfoFormData['user-email'])) {
-                    $emailField = $('form#userInfo').find('input#user-email');
-                    $emailField.parent('.md-input-wrapper').addClass('has-error');
-                    $emailField.parent('.md-input-wrapper').find('.md-input-bar').addClass('bottom-fix error-color');
-                    $emailField.addClass('uk-form-danger');
-                } else {
-                    $emailField = $('form#userInfo').find('input#user-email');
-                    $emailField.parent('.md-input-wrapper').removeClass('has-error');
-                    $emailField.parent('.md-input-wrapper').find('.md-input-bar').removeClass('bottom-fix error-color');
-                    $emailField.removeClass('uk-form-danger');
-
-                    $emailValid = true;
-                }
-
-                if (!userInfoFormData['user-fullname'] || (userInfoFormData['user-fullname'].length < 5)) {
-                    $fullnameField = $('form#userInfo').find('input#user-fullname');
-                    $fullnameField.parent('.md-input-wrapper').addClass('has-error');
-                    $fullnameField.parent('.md-input-wrapper').find('.md-input-bar').addClass('bottom-fix error-color');
-                    $fullnameField.addClass('uk-form-danger');
-                } else {
-                    $fullnameField = $('form#userInfo').find('input#user-fullname');
-                    $fullnameField.parent('.md-input-wrapper').removeClass('has-error');
-                    $fullnameField.parent('.md-input-wrapper').find('.md-input-bar').removeClass('bottom-fix error-color');
-                    $fullnameField.removeClass('uk-form-danger');
-
-                    $fullnameValid = true;
-                }
-
-                if (!$fullnameValid || !$emailValid)
-                    return false;
-
-                var $checkEmailBtn = $(this);
-                $checkEmailBtn.prop('disabled', true).text('Validating...');
-                $.ajax({
-                    method: 'POST',
-                    url: '/api/v1/public/users/checkemail',
-                    data: {
-                        email: userInfoFormData['user-email'],
-                        captcha: $('#captcha').val()
-                    },
-                    error: function(e) {
-                        $checkEmailBtn.prop('disabled', false).text('Next');
-                        window.Snackbar.show({
-                            text: 'An Error occurred. Check Captcha.',
-                            actionTextColor: 'red'
-                        });
-
-                        console.error(e);
-                    },
-                    success: function(data) {
-                        $checkEmailBtn.prop('disabled', false).text('Next');
-                        if (!data.success) {
+                    var $checkEmailBtn = $(this);
+                    $checkEmailBtn.prop('disabled', true).text('Validating...');
+                    $.ajax({
+                        method: 'POST',
+                        url: '/api/v1/public/users/checkemail',
+                        data: {
+                            email: userInfoFormData['user-email'],
+                            captcha: $('#captcha').val()
+                        },
+                        error: function (e) {
                             $checkEmailBtn.prop('disabled', false).text('Next');
                             window.Snackbar.show({
-                                text: 'An Error occurred.',
+                                text: 'An Error occurred. Check Captcha.',
                                 actionTextColor: 'red'
                             });
-                        } else {
-                            if (data.exist) {
-                                //Email already Exist
-                                //Show email exists slide
-                                var $active = $('.activeSlide');
-                                var errorSlide = $('#emailExistsSlide');
-                                if (errorSlide.length > 0) {
-                                    $('span#emailSpan').text(userInfoFormData['user-email']);
-                                    $active.fadeOut(300, function() {
-                                        errorSlide.css({display: 'none'}).removeClass('hide');
-                                        $(this).addClass('hide').removeClass('activeSlide');
-                                        errorSlide.fadeIn(300, function() {
-                                            errorSlide.addClass('activeSlide');
-                                        });
-                                    });
-                                    activeSlide++;
-                                }
+
+                            console.error(e);
+                        },
+                        success: function (data) {
+                            $checkEmailBtn.prop('disabled', false).text('Next');
+                            if (!data.success) {
+                                $checkEmailBtn.prop('disabled', false).text('Next');
+                                window.Snackbar.show({
+                                    text: 'An Error occurred.',
+                                    actionTextColor: 'red'
+                                });
                             } else {
-                                userInfo = {
-                                    'fullname': userInfoFormData['user-fullname'],
-                                    'email': userInfoFormData['user-email']
-                                };
+                                if (data.exist) {
+                                    //Email already Exist
+                                    //Show email exists slide
+                                    var $active = $('.activeSlide');
+                                    var errorSlide = $('#emailExistsSlide');
+                                    if (errorSlide.length > 0) {
+                                        $('span#emailSpan').text(userInfoFormData['user-email']);
+                                        $active.fadeOut(300, function () {
+                                            errorSlide.css({ display: 'none' }).removeClass('hide');
+                                            $(this).addClass('hide').removeClass('activeSlide');
+                                            errorSlide.fadeIn(300, function () {
+                                                errorSlide.addClass('activeSlide');
+                                            });
+                                        });
+                                        activeSlide++;
+                                    }
+                                } else {
+                                    userInfo = {
+                                        'fullname': userInfoFormData['user-fullname'],
+                                        'email': userInfoFormData['user-email']
+                                    };
 
-                                //Reset Error Classes
-                                $emailField = $('form#userInfo').find('input#user-email');
-                                $emailField.parent('.md-input-wrapper').removeClass('has-error');
-                                $emailField.parent('.md-input-wrapper').find('.md-input-bar').removeClass('bottom-fix error-color');
-                                $emailField.removeClass('uk-form-danger');
-                                $fullnameField = $('form#userInfo').find('input#user-fullname');
-                                $fullnameField.parent('.md-input-wrapper').removeClass('has-error');
-                                $fullnameField.parent('.md-input-wrapper').find('.md-input-bar').removeClass('bottom-fix error-color');
-                                $fullnameField.removeClass('uk-form-danger');
+                                    //Reset Error Classes
+                                    $emailField = $('form#userInfo').find('input#user-email');
+                                    $emailField.parent('.md-input-wrapper').removeClass('has-error');
+                                    $emailField.parent('.md-input-wrapper').find('.md-input-bar').removeClass('bottom-fix error-color');
+                                    $emailField.removeClass('uk-form-danger');
+                                    $fullnameField = $('form#userInfo').find('input#user-fullname');
+                                    $fullnameField.parent('.md-input-wrapper').removeClass('has-error');
+                                    $fullnameField.parent('.md-input-wrapper').find('.md-input-bar').removeClass('bottom-fix error-color');
+                                    $fullnameField.removeClass('uk-form-danger');
 
-                                advanceSlide();
+                                    advanceSlide();
+                                }
                             }
                         }
+                    });
+                });
+
+                function advanceSlide() {
+                    var $active = $('.activeSlide');
+                    var nextSlideIdx = activeSlide + 1;
+                    var nextSlide = $('.slide-' + nextSlideIdx);
+                    if (nextSlide.length > 0) {
+                        $active.fadeOut(300, function () {
+                            $(this).addClass('hide').removeClass('activeSlide');
+                            nextSlide.css({ display: 'none' }).removeClass('hide');
+                            nextSlide.fadeIn(300, function () {
+                                nextSlide.addClass('activeSlide');
+                            });
+                        });
+
+                        activeSlide++;
+                    }
+                }
+
+                $('button#submit-issue').click(function () {
+                    if (isDoubleClicked($(this))) return;
+
+                    var adminInfoFormData = $('form#adminAccount').serializeObject();
+                    var $subjectField, $issueField, $phoneField;
+                    var $subjectValid = false, $issueValid = false, $phoneValid = false;
+
+                    if (!adminInfoFormData['ticket-subject'] || (adminInfoFormData['ticket-subject'].length < 5)) {
+                        $subjectField = $('form#adminAccount').find('input#ticket-subject');
+                        $subjectField.parent('.md-input-wrapper').addClass('has-error');
+                        $subjectField.parent('.md-input-wrapper').find('.md-input-bar').addClass('bottom-fix error-color');
+                        $subjectField.addClass('uk-form-danger');
+                    } else {
+                        $subjectField = $('form#adminAccount').find('input#ticket-subject');
+                        $subjectField.parent('.md-input-wrapper').removeClass('has-error');
+                        $subjectField.parent('.md-input-wrapper').find('.md-input-bar').removeClass('bottom-fix error-color');
+                        $subjectField.removeClass('uk-form-danger');
+
+                        $subjectValid = true;
+                    }
+
+                    if (!adminInfoFormData['ticket-phone'] || (adminInfoFormData['ticket-phone'].length < 5)) {
+                        $phoneField = $('form#adminAccount').find('input#ticket-phone');
+                        $phoneField.parent('.md-input-wrapper').addClass('has-error');
+                        $phoneField.parent('.md-input-wrapper').find('.md-input-bar').addClass('bottom-fix error-color');
+                        $phoneField.addClass('uk-form-danger');
+                    } else {
+                        $phoneField = $('form#adminAccount').find('input#ticket-phone');
+                        $phoneField.parent('.md-input-wrapper').removeClass('has-error');
+                        $phoneField.parent('.md-input-wrapper').find('.md-input-bar').removeClass('bottom-fix error-color');
+                        $phoneField.removeClass('uk-form-danger');
+
+                        $phoneValid = true;
+                    }
+
+                    if (!adminInfoFormData['ticket-issue'] || (adminInfoFormData['ticket-issue'].length < 10)) {
+                        $issueField = $('form#adminAccount').find('textarea#ticket-issue');
+                        $issueField.parent('.md-input-wrapper').addClass('has-error');
+                        $issueField.parent('.md-input-wrapper').find('.md-input-bar').addClass('bottom-fix error-color');
+                        $issueField.addClass('uk-form-danger');
+                    } else {
+                        $issueField = $('form#adminAccount').find('textarea#ticket-issue');
+                        $issueField.parent('.md-input-wrapper').removeClass('has-error');
+                        $issueField.parent('.md-input-wrapper').find('.md-input-bar').removeClass('bottom-fix error-color');
+                        $issueField.removeClass('uk-form-danger');
+
+                        $issueValid = true;
+                    }
+
+                    if (!$subjectValid || !$issueValid || !$phoneValid)
+                        return false;
+
+                    ticket = {
+                        subject: adminInfoFormData['ticket-subject'],
+                        issue: adminInfoFormData['ticket-issue'],
+                        phone: adminInfoFormData['ticket-phone']
+                    };
+
+                    advanceSlide();
+
+                    //Send the install POST wait for Response...
+                    setTimeout(function () {
+                        sendIssue();
+                    }, 1500);
+                });
+
+                $('a#privacyPolicyBtn').click(function () {
+                    if (isDoubleClicked($(this))) return;
+
+                    showPrivacyPolicy();
+                });
+
+                $('button#privacyPolicyBackBtn').click(function () {
+                    if (isDoubleClicked($(this))) return;
+
+                    var privacyPolicySlide = $('#privacyPolicySlide');
+                    if (privacyPolicySlide.length > 0) {
+                        privacyPolicySlide.fadeOut(300, function () {
+                            privacyPolicySlide.addClass('hide');
+
+                            var userInfoSlide = $('#userInfoSlide');
+                            userInfoSlide.removeClass('hide');
+                            userInfoSlide.fadeIn(300, function () {
+                                userInfoSlide.addClass('activeSlide');
+                            });
+                        });
+
+                        activeSlide = 1;
                     }
                 });
-            });
 
-            function advanceSlide() {
-                var $active = $('.activeSlide');
-                var nextSlideIdx = activeSlide + 1;
-                var nextSlide = $('.slide-' + nextSlideIdx);
-                if (nextSlide.length > 0) {
-                    $active.fadeOut(300, function() {
-                        $(this).addClass('hide').removeClass('activeSlide');
-                        nextSlide.css({display: 'none'}).removeClass('hide');
-                        nextSlide.fadeIn(300, function() {
-                            nextSlide.addClass('activeSlide');
+                function showPrivacyPolicy() {
+                    //Show Ticket Created Slide
+                    var $active = $('.activeSlide');
+                    var privacyPolicySlide = $('#privacyPolicySlide');
+                    if (privacyPolicySlide.length > 0) {
+                        //$('span#emailSpan').text(userInfoFormData['user-email']);
+                        $active.fadeOut(300, function () {
+                            privacyPolicySlide.css({ display: 'none' }).removeClass('hide');
+                            $(this).addClass('hide');
+                            privacyPolicySlide.fadeIn(300, function () {
+
+                            });
                         });
-                    });
-
-                    activeSlide++;
-                }
-            }
-
-            $('button#submit-issue').click(function() {
-                if (isDoubleClicked($(this))) return;
-
-                var adminInfoFormData = $('form#adminAccount').serializeObject();
-                var $subjectField, $issueField , $phoneField;
-                var $subjectValid = false, $issueValid = false , $phoneValid = false;
-
-                if (!adminInfoFormData['ticket-subject'] || (adminInfoFormData['ticket-subject'].length < 5)) {
-                    $subjectField = $('form#adminAccount').find('input#ticket-subject');
-                    $subjectField.parent('.md-input-wrapper').addClass('has-error');
-                    $subjectField.parent('.md-input-wrapper').find('.md-input-bar').addClass('bottom-fix error-color');
-                    $subjectField.addClass('uk-form-danger');
-                } else {
-                    $subjectField = $('form#adminAccount').find('input#ticket-subject');
-                    $subjectField.parent('.md-input-wrapper').removeClass('has-error');
-                    $subjectField.parent('.md-input-wrapper').find('.md-input-bar').removeClass('bottom-fix error-color');
-                    $subjectField.removeClass('uk-form-danger');
-
-                    $subjectValid = true;
-                }
-
-                if (!adminInfoFormData['ticket-phone'] || (adminInfoFormData['ticket-phone'].length < 5)) {
-                    $phoneField = $('form#adminAccount').find('input#ticket-phone');
-                    $phoneField.parent('.md-input-wrapper').addClass('has-error');
-                    $phoneField.parent('.md-input-wrapper').find('.md-input-bar').addClass('bottom-fix error-color');
-                    $phoneField.addClass('uk-form-danger');
-                } else {
-                    $phoneField = $('form#adminAccount').find('input#ticket-phone');
-                    $phoneField.parent('.md-input-wrapper').removeClass('has-error');
-                    $phoneField.parent('.md-input-wrapper').find('.md-input-bar').removeClass('bottom-fix error-color');
-                    $phoneField.removeClass('uk-form-danger');
-
-                    $phoneValid = true;
-                }
-
-                if (!adminInfoFormData['ticket-issue'] || (adminInfoFormData['ticket-issue'].length < 10)) {
-                    $issueField = $('form#adminAccount').find('textarea#ticket-issue');
-                    $issueField.parent('.md-input-wrapper').addClass('has-error');
-                    $issueField.parent('.md-input-wrapper').find('.md-input-bar').addClass('bottom-fix error-color');
-                    $issueField.addClass('uk-form-danger');
-                } else {
-                    $issueField = $('form#adminAccount').find('textarea#ticket-issue');
-                    $issueField.parent('.md-input-wrapper').removeClass('has-error');
-                    $issueField.parent('.md-input-wrapper').find('.md-input-bar').removeClass('bottom-fix error-color');
-                    $issueField.removeClass('uk-form-danger');
-
-                    $issueValid = true;
-                }
-
-                if (!$subjectValid || !$issueValid|| !$phoneValid)
-                    return false;
-
-                ticket = {
-                    subject: adminInfoFormData['ticket-subject'],
-                    issue: adminInfoFormData['ticket-issue'],
-                    phone: adminInfoFormData['ticket-phone']
-                };
-
-                advanceSlide();
-
-                //Send the install POST wait for Response...
-                setTimeout(function() {
-                    sendIssue();
-                }, 1500);
-            });
-
-            $('a#privacyPolicyBtn').click(function() {
-                if (isDoubleClicked($(this))) return;
-
-                showPrivacyPolicy();
-            });
-
-            $('button#privacyPolicyBackBtn').click(function() {
-                if (isDoubleClicked($(this))) return;
-
-                var privacyPolicySlide = $('#privacyPolicySlide');
-                if (privacyPolicySlide.length > 0) {
-                    privacyPolicySlide.fadeOut(300, function() {
-                        privacyPolicySlide.addClass('hide');
-
-                        var userInfoSlide = $('#userInfoSlide');
-                        userInfoSlide.removeClass('hide');
-                        userInfoSlide.fadeIn(300, function() {
-                            userInfoSlide.addClass('activeSlide');
-                        });
-                    });
-
-                    activeSlide = 1;
-                }
-            });
-
-            function showPrivacyPolicy() {
-                //Show Ticket Created Slide
-                var $active = $('.activeSlide');
-                var privacyPolicySlide = $('#privacyPolicySlide');
-                if (privacyPolicySlide.length > 0) {
-                    //$('span#emailSpan').text(userInfoFormData['user-email']);
-                    $active.fadeOut(300, function() {
-                        privacyPolicySlide.css({display: 'none'}).removeClass('hide');
-                        $(this).addClass('hide');
-                        privacyPolicySlide.fadeIn(300, function() {
-
-                        });
-                    });
-                }
-            }
-
-            function showTicketCreated() {
-                //Show Ticket Created Slide
-                var $active = $('.activeSlide');
-                var ticketCreatedSlide = $('#ticketCreatedSlide');
-                if (ticketCreatedSlide.length > 0) {
-                    //$('span#emailSpan').text(userInfoFormData['user-email']);
-                    $active.fadeOut(300, function() {
-                        ticketCreatedSlide.css({display: 'none'}).removeClass('hide');
-                        $(this).addClass('hide').removeClass('activeSlide');
-                        ticketCreatedSlide.fadeIn(300, function() {
-                            ticketCreatedSlide.addClass('activeSlide');
-                        });
-                    });
-                    activeSlide++;
-                }
-            }
-
-            function sendIssue() {
-                var d = {
-                    user: userInfo,
-                    ticket: ticket,
-                    captcha: $('#captcha').val()
-                };
-                $.ajax({
-                    method: 'POST',
-                    url: '/api/v1/public/tickets/create',
-                    data: JSON.stringify(d),
-                    contentType: 'application/json',
-                    success: function(response) {
-                        if (!response.success) {
-                            //TODO: Show Error Slide
-                        } else {
-                            //console.log(response);
-                            $('span#spanfullname').text(userInfo.fullname);
-                            $('strong#strongSubject').text(ticket.subject);
-                            $('strong#strongUsername').text(userInfo.email);
-                            $('strong#strongPassword').text(response.userData.chancepass);
-
-                            showTicketCreated();
-                        }
-                    },
-                    error: function(err) {
-                        console.error(err);
                     }
-                })
-            }
+                }
 
-            function validateEmail(email) {
-                var mailFormat = /^\w+([.-]\w+)*@\w+([.-]\w+)*(\.\w+)+$/;
-                return email.match(mailFormat);
-            }
+                function showTicketCreated() {
+                    //Show Ticket Created Slide
+                    var $active = $('.activeSlide');
+                    var ticketCreatedSlide = $('#ticketCreatedSlide');
+                    if (ticketCreatedSlide.length > 0) {
+                        //$('span#emailSpan').text(userInfoFormData['user-email']);
+                        $active.fadeOut(300, function () {
+                            ticketCreatedSlide.css({ display: 'none' }).removeClass('hide');
+                            $(this).addClass('hide').removeClass('activeSlide');
+                            ticketCreatedSlide.fadeIn(300, function () {
+                                ticketCreatedSlide.addClass('activeSlide');
+                            });
+                        });
+                        activeSlide++;
+                    }
+                }
 
-            $.fn.serializeObject = function(){
-                var obj = {};
+                function sendIssue() {
+                    var d = {
+                        user: userInfo,
+                        ticket: ticket,
+                        captcha: $('#captcha').val()
+                    };
+                    $.ajax({
+                        method: 'POST',
+                        url: '/api/v1/public/tickets/create',
+                        data: JSON.stringify(d),
+                        contentType: 'application/json',
+                        success: function (response) {
+                            if (!response.success) {
+                                //TODO: Show Error Slide
+                            } else {
+                                //console.log(response);
+                                $('span#spanfullname').text(userInfo.fullname);
+                                $('strong#strongSubject').text(ticket.subject);
+                                $('strong#strongUsername').text(userInfo.email);
+                                $('strong#strongPassword').text(response.userData.chancepass);
 
-                $.each( this.serializeArray(), function(i,o){
-                    var n = o.name,
+                                showTicketCreated();
+                            }
+                        },
+                        error: function (err) {
+                            console.error(err);
+                        }
+                    })
+                }
+
+                function validateEmail(email) {
+                    var mailFormat = /^\w+([.-]\w+)*@\w+([.-]\w+)*(\.\w+)+$/;
+                    return email.match(mailFormat);
+                }
+
+                $.fn.serializeObject = function () {
+                    var obj = {};
+
+                    $.each(this.serializeArray(), function (i, o) {
+                        var n = o.name,
                             v = o.value;
 
-                    obj[n] = obj[n] === undefined ? v
-                            : $.isArray( obj[n] ) ? obj[n].concat( v )
-                            : [ obj[n], v ];
-                });
+                        obj[n] = obj[n] === undefined ? v
+                            : $.isArray(obj[n]) ? obj[n].concat(v)
+                                : [obj[n], v];
+                    });
 
-                return obj;
-            };
+                    return obj;
+                };
 
 
+            });
         });
-    });
-</script>
+    </script>
 </body>
+
 </html>
