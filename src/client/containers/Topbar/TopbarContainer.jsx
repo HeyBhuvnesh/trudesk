@@ -142,16 +142,7 @@ class TopbarContainer extends React.Component {
           <div className={clsx('info-banner', this.showInfoBanner ? '' : 'hide')}>
             <div className={'close'} onClick={() => this.closeInfo()} />
             <p>
-              You're invited to sign up for Trudesk Cloud Beta, our free-to-use cloud-hosted platform.
-              <a
-                href='https://trudesk.io'
-                className={'md-btn md-btn-wave md-btn-small md-btn-success text-white'}
-                style={{ marginLeft: 15 }}
-                target={'_blank'}
-                onClick={() => this.closeInfo()}
-              >
-                Apply Now
-              </a>
+            आनंदसेवा में आपका स्वागत है
             </p>
           </div>
         )}
