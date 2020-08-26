@@ -13,7 +13,7 @@ module.exports = function (grunt) {
       web: {
         options: {
           script: 'app.js',
-          port: 8118
+          port: 80
         }
       }
     },
